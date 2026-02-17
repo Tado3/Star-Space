@@ -1,0 +1,661 @@
+﻿{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<!-- Welcome Section with Star Space Branding -->
+<div class="d-flex justify-content-between align-items-center mb-4 position-relative" style="z-index: 100;">
+    
+</div>
+
+<!-- Statistics Cards Row - Star Space Styled -->
+<div class="row g-4 mb-4 position-relative" style="z-index: 100;">
+    <!-- Total Installations Card -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-0" style="border-left: 6px solid #ffc107;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase small fw-bold" style="color: rgba(255, 255, 255, 0.8);">Total Installations</span>
+                        <h2 class="display-6 fw-bold mt-2 mb-0" style="color: #ffc107;">{{ total_installations|default:"0" }}</h2>
+                    </div>
+                    <div class="icon-shape p-3 rounded-3" style="background: rgba(255, 193, 7, 0.2) !important;">
+                        <i class="bi bi-tools" style="color: #ffc107; font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="fw-bold">
+                        
+                    </span>
+                    <span class="small ms-1" style="color: rgba(255, 255, 255, 0.6); font-weight: 500;">All time installations</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Subscribers Card -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-0" style="border-left: 6px solid #28a745;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase small fw-bold" style="color: rgba(255, 255, 255, 0.8);">Active Subscribers</span>
+                        <h2 class="display-6 fw-bold mt-2 mb-0" style="color: #ffc107;">{{ total_active|default:"0" }}</h2>
+                    </div>
+                    <div class="icon-shape p-3 rounded-3" style="background: rgba(40, 167, 69, 0.2) !important;">
+                        <i class="bi bi-people" style="color: #28a745; font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="fw-bold">
+                       
+                    </span>
+                    <span class="small ms-1" style="color: rgba(255, 255, 255, 0.6); font-weight: 500;">Currently active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Due Soon Card -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-0" style="border-left: 6px solid #ffc107;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase small fw-bold" style="color: rgba(255, 255, 255, 0.8);">Due Soon (7 days)</span>
+                        <h2 class="display-6 fw-bold mt-2 mb-0" style="color: #ffc107;">{{ due_soon|default:"0" }}</h2>
+                    </div>
+                    <div class="icon-shape p-3 rounded-3" style="background: rgba(255, 193, 7, 0.2) !important;">
+                        <i class="bi bi-exclamation-triangle" style="color: #ffc107; font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="fw-bold">
+                       
+                    </span>
+                    <span class="small ms-1" style="color: rgba(255, 255, 255, 0.6); font-weight: 500;">Need attention</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overdue Card -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-0" style="border-left: 6px solid #dc3545;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase small fw-bold" style="color: rgba(255, 255, 255, 0.8);">Overdue</span>
+                        <h2 class="display-6 fw-bold mt-2 mb-0" style="color: #ffc107;">{{ overdue|default:"0" }}</h2>
+                    </div>
+                    <div class="icon-shape p-3 rounded-3" style="background: rgba(220, 53, 69, 0.2) !important;">
+                        <i class="bi bi-exclamation-circle" style="color: #dc3545; font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="fw-bold">
+                       
+                    </span>
+                    <span class="small ms-1" style="color: rgba(255, 255, 255, 0.6); font-weight: 500;">Requires immediate action</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts and Analytics Row -->
+<div class="row g-4 mb-4 position-relative" style="z-index: 100;">
+    <!-- Kit Type Distribution Chart -->
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-lg h-100 sidebar-card">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0" style="color: #ffc107;">
+                        <i class="bi bi-pie-chart me-2" style="color: #ffc107;"></i>Kit Type Distribution
+                    </h5>
+                    <span class="badge px-3 py-2" style="background: #ffc107; color: #1a2a3a;">Active Subscribers</span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if total_active > 0 %}
+                <div class="row align-items-center">
+                    <div class="col-md-5">
+                        <!-- Donut Chart Visualization -->
+                        <div class="position-relative" style="width: 180px; height: 180px; margin: 0 auto;">
+                            <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                <h3 class="fw-bold mb-0" style="color: #ffc107;">{{ total_active }}</h3>
+                                <small style="color: rgba(255, 255, 255, 0.6);">Total</small>
+                            </div>
+                            <svg viewBox="0 0 36 36" class="w-100 h-100">
+                                <circle cx="18" cy="18" r="15.91549430918954" fill="transparent" stroke="#2c3e50" stroke-width="2.5"></circle>
+                                {% if kit_type_stats.standard %}
+                                <circle cx="18" cy="18" r="15.91549430918954" fill="transparent" 
+                                        stroke="#ffc107" stroke-width="2.5" 
+                                        stroke-dasharray="{% widthratio kit_type_stats.standard total_active 100 %} 100" 
+                                        stroke-dashoffset="25" 
+                                        transform="rotate(-90 18 18)"></circle>
+                                {% endif %}
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="list-group list-group-flush bg-transparent">
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0" style="background: transparent !important; border-bottom: 1px solid #2c3e50 !important;">
+                                <div>
+                                    <span class="badge rounded-circle p-2 me-2" style="width: 12px; height: 12px; background: #ffc107;">&nbsp;</span>
+                                    <span class="fw-medium" style="color: #ffffff;">Standard Kit</span>
+                                </div>
+                                <div>
+                                    <span class="fw-bold" style="color: #ffc107;">{{ kit_type_stats.standard|default:"0" }}</span>
+                                    <span class="small ms-2" style="color: rgba(255, 255, 255, 0.6);">
+                                        ({% widthratio kit_type_stats.standard total_active 100 %}%)
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0" style="background: transparent !important;">
+                                <div>
+                                    <span class="badge rounded-circle p-2 me-2" style="width: 12px; height: 12px; background: #6c757d;">&nbsp;</span>
+                                    <span class="fw-medium" style="color: #ffffff;">Mini Kit</span>
+                                </div>
+                                <div>
+                                    <span class="fw-bold" style="color: #ffc107;">{{ kit_type_stats.mini|default:"0" }}</span>
+                                    <span class="small ms-2" style="color: rgba(255, 255, 255, 0.6);">
+                                        ({% widthratio kit_type_stats.mini total_active 100 %}%)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress mt-3" style="height: 8px; background-color: #2c3e50;">
+                            <div class="progress-bar" style="width: {% widthratio kit_type_stats.standard total_active 100 %}%; background: #ffc107;" 
+                                 role="progressbar" aria-valuenow="{{ kit_type_stats.standard }}" aria-valuemin="0" aria-valuemax="{{ total_active }}">
+                            </div>
+                            <div class="progress-bar" style="width: {% widthratio kit_type_stats.mini total_active 100 %}%; background: #6c757d;"></div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-pie-chart fs-1" style="color: #ffc107; opacity: 0.5;"></i>
+                    <p class="mt-2" style="color: #ffffff;">No active subscribers to display</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Installations with Timeline -->
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-lg h-100 sidebar-card">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0" style="color: #ffc107;">
+                        <i class="bi bi-clock-history me-2" style="color: #ffc107;"></i>Recent Installations
+                    </h5>
+                    <a href="{% url 'clients:installation_list' %}" class="btn btn-sm fw-bold" style="color: #ffc107; border: 2px solid #ffc107; background: transparent;">
+                        View All <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if recent_installations %}
+                    <div class="timeline">
+                        {% for installation in recent_installations %}
+                        <div class="timeline-item pb-3">
+                            <div class="d-flex">
+                                <div class="timeline-icon me-3">
+                                    <span class="p-2 rounded-circle d-inline-block" style="background: rgba(255, 193, 7, 0.2);">
+                                        <i class="bi bi-tools" style="color: #ffc107;"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold mb-1" style="color: #ffffff;">{{ installation.name }}</h6>
+                                        <small style="color: rgba(255, 255, 255, 0.6);">{{ installation.installation_date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge me-2" style="background: {% if installation.kit_type == 'STANDARD' %}#ffc107{% else %}#6c757d{% endif %}; color: {% if installation.kit_type == 'STANDARD' %}#1a2a3a{% else %}#ffffff{% endif %};">
+                                            {{ installation.get_kit_type_display }}
+                                        </span>
+                                        <small style="color: rgba(255, 255, 255, 0.6);">
+                                            <i class="bi bi-telephone me-1"></i>{{ installation.contact }}
+                                        </small>
+                                    </div>
+                                    {% if not forloop.last %}
+                                    <div class="timeline-line" style="background: linear-gradient(180deg, #ffc107 0%, transparent 100%);"></div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-calendar-x display-1" style="color: #ffc107; opacity: 0.5;"></i>
+                        <p class="mt-3" style="color: #ffffff;">No recent installations found</p>
+                        <a href="{% url 'clients:add_installation' %}" class="btn btn-sm fw-bold" style="background: #ffc107; color: #1a2a3a;">
+                            <i class="bi bi-plus-circle me-2"></i>Add Installation
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions and Alerts Row -->
+<div class="row g-4 position-relative" style="z-index: 100;">
+    <!-- Subscription Alerts -->
+    <div class="col-xl-4">
+        <div class="card border-0 shadow-lg h-100 sidebar-card">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h5 class="fw-bold mb-0" style="color: #ffc107;">
+                    <i class="bi bi-bell me-2" style="color: #ffc107;"></i>Quick Alerts
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if due_soon > 0 or overdue > 0 %}
+                    <div class="alert border-0" role="alert" style="background-color: rgba(255, 193, 7, 0.1); border-left: 4px solid #ffc107; color: #ffffff;">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-exclamation-triangle-fill fs-3" style="color: #ffc107;"></i>
+                            </div>
+                            <div>
+                                <h6 class="alert-heading fw-bold" style="color: #ffc107;">Subscription Alerts</h6>
+                                <p class="mb-0">
+                                    {% if due_soon > 0 %}
+                                        <span class="badge me-2 fw-bold" style="background: #ffc107; color: #1a2a3a;">{{ due_soon }}</span> <span style="color: #ffffff;">subscriptions due soon</span><br>
+                                    {% endif %}
+                                    {% if overdue > 0 %}
+                                        <span class="badge bg-danger me-2 fw-bold" style="color: #ffffff;">{{ overdue }}</span> <span style="color: #ffffff;">subscriptions overdue</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert border-0" role="alert" style="background-color: rgba(40, 167, 69, 0.1); border-left: 4px solid #28a745; color: #ffffff;">
+                        <i class="bi bi-check-circle-fill me-2" style="color: #28a745;"></i>
+                        <span style="color: #ffffff;">No pending subscription alerts</span>
+                    </div>
+                {% endif %}
+                
+                <div class="mt-3 d-grid gap-2">
+                    <a href="{% url 'clients:subscribers_due_soon' %}" class="btn fw-bold" style="background: #ffc107; color: #1a2a3a;">
+                        <i class="bi bi-clock me-2"></i>View Due Soon
+                    </a>
+                    <a href="{% url 'clients:subscribers_overdue' %}" class="btn fw-bold" style="background: transparent; color: #dc3545; border: 2px solid #dc3545;">
+                        <i class="bi bi-exclamation-circle me-2"></i>View Overdue
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-xl-4">
+        <div class="card border-0 shadow-lg h-100 sidebar-card">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h5 class="fw-bold mb-0" style="color: #ffc107;">
+                    <i class="bi bi-lightning-charge me-2" style="color: #ffc107;"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-3">
+                    <a href="{% url 'clients:add_installation' %}" class="btn btn-outline-warning text-start d-block p-3 fw-bold" style="background: transparent !important; color: #ffffff; border-color: #ffc107;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-plus-circle fs-4 me-3" style="color: #ffc107;"></i>
+                            <div>
+                                <strong style="color: #ffffff;">New Installation</strong>
+                                <div class="small" style="color: rgba(255, 255, 255, 0.6);">Schedule a new installation</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{% url 'clients:add_subscriber' %}" class="btn btn-outline-success text-start d-block p-3 fw-bold" style="background: transparent !important; color: #ffffff; border-color: #28a745;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-plus fs-4 me-3" style="color: #28a745;"></i>
+                            <div>
+                                <strong style="color: #ffffff;">New Subscriber</strong>
+                                <div class="small" style="color: rgba(255, 255, 255, 0.6);">Add a new active subscriber</div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#" class="btn btn-outline-info text-start d-block p-3 fw-bold" style="background: transparent !important; color: #ffffff; border-color: #17a2b8;" onclick="window.print()">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-printer fs-4 me-3" style="color: #17a2b8;"></i>
+                            <div>
+                                <strong style="color: #ffffff;">Print Report</strong>
+                                <div class="small" style="color: rgba(255, 255, 255, 0.6);">Generate dashboard report</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="col-xl-4">
+        <div class="card border-0 shadow-lg h-100 sidebar-card">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <h5 class="fw-bold mb-0" style="color: #ffc107;">
+                    <i class="bi bi-activity me-2" style="color: #ffc107;"></i>System Health
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-bold" style="color: #ffffff;">Database Status</span>
+                        <span class="badge bg-success">Healthy</span>
+                    </div>
+                    <div class="progress" style="height: 8px; background-color: #2c3e50;">
+                        <div class="progress-bar bg-success" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-bold" style="color: #ffffff;">Storage Usage</span>
+                        <span class="badge" style="background: #ffc107; color: #1a2a3a;">25% Used</span>
+                    </div>
+                    <div class="progress" style="height: 8px; background-color: #2c3e50;">
+                        <div class="progress-bar" style="width: 25%; background: #ffc107;"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-bold" style="color: #ffffff;">Last Backup</span>
+                        <span class="badge bg-secondary">{% now "M d, Y H:i" %}</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-2 border-top" style="border-color: #2c3e50 !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="small" style="color: rgba(255, 255, 255, 0.6);">System Version</span>
+                        <span class="small fw-bold" style="color: #ffc107;">Star Space v1.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles for Star Space Branding -->
+<style>
+    /* Star Space Color Variables */
+    :root {
+        --star-dark: #1a2a3a;
+        --star-darker: #0f1a24;
+        --star-gold: #ffc107;
+        --star-gold-dark: #e0a800;
+        --star-border: #2c3e50;
+        --sidebar-bg: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+    }
+    
+    /* Background Image */
+    .background-foreground {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1 !important;
+        pointer-events: none;
+        overflow: hidden;
+    }
+    
+    .background-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.9;
+    }
+    
+    .background-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.6) 100%);
+        pointer-events: none;
+    }
+    
+    /* Sidebar */
+    #sidebar {
+        z-index: 1000 !important;
+        background: var(--sidebar-bg) !important;
+    }
+    
+    /* Content area */
+    #content {
+        position: relative;
+        z-index: 2 !important;
+    }
+    
+    .position-relative {
+        position: relative;
+        z-index: 100 !important;
+    }
+    
+    /* Sidebar themed cards */
+    .card, .sidebar-card {
+        background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%) !important;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Timeline Styles */
+    .timeline {
+        position: relative;
+        padding-left: 1.5rem;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    
+    .timeline-icon {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .timeline-line {
+        position: absolute;
+        left: 24px;
+        top: 45px;
+        bottom: -15px;
+        width: 2px;
+        background: linear-gradient(180deg, #ffc107 0%, transparent 100%);
+    }
+    
+    .icon-shape {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 193, 7, 0.4) !important;
+        background: linear-gradient(135deg, #1f3345 0%, #14222e 100%) !important;
+        border: 1px solid rgba(255, 193, 7, 0.4) !important;
+    }
+    
+    .stat-card:hover .text-uppercase,
+    .stat-card:hover .small.ms-1 {
+        color: #ffc107 !important;
+    }
+    
+    .stat-card:hover h2.display-6 {
+        color: #ffc107 !important;
+        text-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover .icon-shape {
+        background: rgba(255, 193, 7, 0.3) !important;
+        transform: scale(1.1) rotate(5deg);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover .icon-shape i {
+        color: #ffc107 !important;
+        filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.5));
+    }
+    
+    /* Card hover effect for all cards */
+    .card:hover, .sidebar-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 193, 7, 0.25) !important;
+        border: 1px solid rgba(255, 193, 7, 0.3) !important;
+        background: linear-gradient(135deg, #1f3345 0%, #14222e 100%) !important;
+    }
+    
+    /* Button styles */
+    .btn-warning {
+        background-color: var(--star-gold);
+        border-color: var(--star-gold);
+        color: var(--star-dark);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-warning:hover {
+        background-color: var(--star-gold-dark);
+        border-color: var(--star-gold-dark);
+        color: var(--star-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+    }
+    
+    .btn-outline-warning {
+        color: #ffffff;
+        border-color: var(--star-gold);
+        border-width: 2px;
+        background: transparent;
+    }
+    
+    .btn-outline-warning:hover {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        border-color: var(--star-gold);
+        color: var(--star-dark);
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    }
+    
+    .btn-outline-success {
+        color: #ffffff;
+        border-color: #28a745;
+        border-width: 2px;
+        background: transparent;
+    }
+    
+    .btn-outline-success:hover {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        border-color: #28a745;
+        color: #ffffff;
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-outline-info {
+        color: #ffffff;
+        border-color: #17a2b8;
+        border-width: 2px;
+        background: transparent;
+    }
+    
+    .btn-outline-info:hover {
+        background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+        border-color: #17a2b8;
+        color: #ffffff;
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+    }
+    
+    /* Badge styles */
+    .badge.bg-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+        color: var(--star-dark) !important;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Alert styles */
+    .alert {
+        border-radius: 12px;
+        background: rgba(26, 42, 58, 0.8) !important;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* List group items */
+    .list-group-item {
+        background: transparent !important;
+        border-color: #2c3e50 !important;
+    }
+    
+    /* Progress bar background */
+    .progress {
+        border-radius: 10px;
+        background-color: #2c3e50 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .progress-bar {
+        transition: width 0.6s ease;
+    }
+    
+    .progress-bar.bg-success {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+    }
+    
+    .progress-bar:not(.bg-success) {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #1a2a3a;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #e0a800 0%, #ffc107 100%);
+    }
+    
+    /* Additional glow effects for numbers */
+    .display-6 {
+        transition: all 0.3s ease;
+    }
+    
+    /* Card header styles */
+    .card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Badge in header */
+    .badge.px-3.py-2 {
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+    }
+</style>
+{% endblock %}

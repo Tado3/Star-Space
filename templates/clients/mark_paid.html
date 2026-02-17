@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: #1a2a3a;">Record Payment</h2>
+            <p class="text-muted">
+                <i class="bi bi-currency-dollar me-2" style="color: #ffc107;"></i>
+                Update subscription payment for {{ subscriber.name }}
+            </p>
+        </div>
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Go Back
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold text-white mb-0">
+                        <i class="bi bi-check-circle-fill me-2" style="color: #ffc107;"></i>
+                        Payment Details
+                    </h5>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Subscriber Info Summary -->
+                    <div class="text-center mb-4">
+                        <div class="avatar-circle bg-warning text-dark mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.8rem;">
+                            {{ subscriber.name|make_list|first|upper }}
+                        </div>
+                        <h4 class="text-white mb-1">{{ subscriber.name }}</h4>
+                        <p class="text-white-50 mb-0">{{ subscriber.email }}</p>
+                        <p class="text-white-50">
+                            <span class="badge bg-warning text-dark px-3 py-2 mt-2">
+                                <i class="bi bi-router me-1"></i>{{ subscriber.get_kit_type_display }}
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- Current Subscription Info -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.05);">
+                                <small class="text-white-50 d-block">Last Payment</small>
+                                <span class="text-white fw-bold">{{ subscriber.last_subscription_date|date:"d M Y" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.05);">
+                                <small class="text-white-50 d-block">Next Due Date</small>
+                                <span class="text-warning fw-bold">{{ subscriber.next_subscription_date|date:"d M Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <form method="post" action="{% url 'clients:mark_subscriber_paid' subscriber.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.GET.next|default:'clients:subscriber_list' }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-white-50">
+                                <i class="bi bi-calendar-check me-2" style="color: #ffc107;"></i>Payment Date
+                            </label>
+                            <input type="date" name="payment_date" class="form-control bg-dark text-white border-warning" 
+                                   value="{% now 'Y-m-d' %}" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-white-50">
+                                <i class="bi bi-calendar-plus me-2" style="color: #ffc107;"></i>Extend Subscription (months)
+                            </label>
+                            <select name="next_subscription_months" class="form-select bg-dark text-white border-warning">
+                                <option value="1">1 Month</option>
+                                <option value="3">3 Months</option>
+                                <option value="6">6 Months</option>
+                                <option value="12">12 Months</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Confirm Payment
+                            </button>
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Preview - Removed the problematic template tags -->
+                    <div class="mt-4 p-3 rounded-3" style="background: rgba(255,193,7,0.1);">
+                        <small class="text-warning d-block mb-2">
+                            <i class="bi bi-info-circle me-1"></i>After payment:
+                        </small>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="text-white-50 small">Last Payment</div>
+                                <div class="text-white" id="previewLast">{% now "d M Y" %}</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-white-50 small">Next Due</div>
+                                <div class="text-warning" id="previewNext">{% now "d M Y" %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    .form-control, .form-select {
+        background-color: #1a2a3a !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+    }
+    
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #1a2a3a;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #e0a800;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    }
+</style>
+
+<script>
+    // Preview next subscription date
+    document.querySelector('input[name="payment_date"]').addEventListener('change', updatePreview);
+    document.querySelector('select[name="next_subscription_months"]').addEventListener('change', updatePreview);
+    
+    function updatePreview() {
+        var paymentDate = document.querySelector('input[name="payment_date"]').value;
+        var months = parseInt(document.querySelector('select[name="next_subscription_months"]').value);
+        
+        if (paymentDate) {
+            var date = new Date(paymentDate);
+            document.getElementById('previewLast').textContent = formatDate(date);
+            
+            date.setMonth(date.getMonth() + months);
+            document.getElementById('previewNext').textContent = formatDate(date);
+        }
+    }
+    
+    function formatDate(date) {
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var day = date.getDate();
+        var month = months[date.getMonth()];
+        var year = date.getFullYear();
+        return day + ' ' + month + ' ' + year;
+    }
+
+    // Trigger initial preview
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePreview();
+    });
+</script>
+{% endblock %}

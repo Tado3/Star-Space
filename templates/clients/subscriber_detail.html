@@ -1,0 +1,595 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+            <div class="card-header bg-transparent border-0 pt-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="text-white">
+                        <i class="bi bi-person-circle text-warning me-2"></i>
+                        Subscriber Details
+                    </h3>
+                    <div class="btn-group">
+                        {% if not subscriber.is_deactivated %}
+                        <a href="{% url 'clients:edit_subscriber' subscriber.pk %}" class="btn btn-outline-warning btn-sm rounded-pill px-3">
+                            <i class="bi bi-pencil me-1"></i>Edit
+                        </a>
+                        <a href="{% url 'clients:mark_subscriber_paid' subscriber.pk %}?next={{ request.path }}" class="btn btn-outline-success btn-sm rounded-pill px-3 ms-1">
+                            <i class="bi bi-currency-dollar me-1"></i>Record Payment
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'clients:subscriber_list' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 ms-1">
+                            <i class="bi bi-arrow-left me-1"></i>Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Status Banner -->
+                <div class="alert mb-4 
+                    {% if subscriber.is_deactivated %}alert-secondary
+                    {% elif subscriber.is_subscription_overdue %}alert-danger
+                    {% elif subscriber.is_subscription_due_soon %}alert-warning
+                    {% else %}alert-success{% endif %} 
+                    border-0 d-flex align-items-center" 
+                    style="background: {% if subscriber.is_deactivated %}rgba(108, 117, 125, 0.1){% elif subscriber.is_subscription_overdue %}rgba(220, 53, 69, 0.1){% elif subscriber.is_subscription_due_soon %}rgba(255, 193, 7, 0.1){% else %}rgba(25, 135, 84, 0.1){% endif %};">
+                    <div class="me-3">
+                        <i class="bi 
+                            {% if subscriber.is_deactivated %}bi-person-x text-secondary fs-1
+                            {% elif subscriber.is_subscription_overdue %}bi-exclamation-triangle-fill text-danger fs-1
+                            {% elif subscriber.is_subscription_due_soon %}bi-clock-fill text-warning fs-1
+                            {% else %}bi-check-circle-fill text-success fs-1{% endif %}">
+                        </i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1 
+                            {% if subscriber.is_deactivated %}text-secondary
+                            {% elif subscriber.is_subscription_overdue %}text-danger
+                            {% elif subscriber.is_subscription_due_soon %}text-warning
+                            {% else %}text-success{% endif %}">
+                            {% if subscriber.is_deactivated %}
+                                Account Deactivated
+                            {% elif subscriber.is_subscription_overdue %}
+                                Subscription Overdue
+                            {% elif subscriber.is_subscription_due_soon %}
+                                Subscription Due Soon
+                            {% else %}
+                                Active Subscription
+                            {% endif %}
+                        </h5>
+                        <p class="mb-0 text-white-50">
+                            {% if subscriber.is_deactivated %}
+                                This account was deactivated on {{ subscriber.deactivated_at|date:"F j, Y" }}
+                                {% if subscriber.deactivation_reason %}
+                                    <br>Reason: {{ subscriber.deactivation_reason }}
+                                {% endif %}
+                            {% elif subscriber.is_subscription_overdue %}
+                                Payment was due on {{ subscriber.next_subscription_date|date:"F j, Y" }} 
+                                ({{ subscriber.days_until_due|stringformat:'+d'|cut:'-' }} days overdue)
+                            {% elif subscriber.is_subscription_due_soon %}
+                                Payment due in {{ subscriber.days_until_due }} days on {{ subscriber.next_subscription_date|date:"F j, Y" }}
+                            {% else %}
+                                Next payment due on {{ subscriber.next_subscription_date|date:"F j, Y" }}
+                                ({{ subscriber.days_until_due }} days remaining)
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Deactivation/Reactivation Actions -->
+                {% if subscriber.is_deactivated %}
+                <div class="card mb-4 border-0" style="background: rgba(25, 135, 84, 0.1);">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-success mb-1">
+                                    <i class="bi bi-arrow-repeat me-2"></i>Reactivate Account
+                                </h6>
+                                <p class="text-white-50 small mb-0">
+                                    Reactivate this subscriber and set a new subscription period
+                                </p>
+                            </div>
+                            <button class="btn btn-success btn-sm rounded-pill px-4" onclick="showReactivationModal()">
+                                <i class="bi bi-person-check me-2"></i>Reactivate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Subscriber Information -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-0 h-100" style="background: rgba(255, 255, 255, 0.05);">
+                            <div class="card-body">
+                                <h6 class="text-warning mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>Personal Information
+                                </h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th class="text-white-50 ps-0" style="width: 120px;">Name:</th>
+                                        <td class="text-white">{{ subscriber.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-white-50 ps-0">Contact:</th>
+                                        <td class="text-white">
+                                            <a href="tel:{{ subscriber.contact }}" class="text-white text-decoration-none">
+                                                <i class="bi bi-telephone-fill text-warning me-1 small"></i>{{ subscriber.contact }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-white-50 ps-0">Email:</th>
+                                        <td class="text-white">
+                                            <a href="mailto:{{ subscriber.email }}" class="text-white text-decoration-none">
+                                                <i class="bi bi-envelope-fill text-warning me-1 small"></i>{{ subscriber.email }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-white-50 ps-0">Kit Type:</th>
+                                        <td>
+                                            <span class="badge {% if subscriber.kit_type == 'STANDARD' %}bg-primary{% else %}bg-secondary{% endif %} px-3 py-2">
+                                                <i class="bi bi-router me-1"></i>{{ subscriber.get_kit_type_display }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-0 h-100" style="background: rgba(255, 255, 255, 0.05);">
+                            <div class="card-body">
+                                <h6 class="text-warning mb-3">
+                                    <i class="bi bi-calendar-check me-2"></i>Subscription Information
+                                </h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th class="text-white-50 ps-0" style="width: 140px;">Last Payment:</th>
+                                        <td class="text-white">
+                                            <i class="bi bi-calendar-check text-warning me-1"></i>
+                                            {{ subscriber.last_subscription_date|date:"F j, Y" }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-white-50 ps-0">Next Payment:</th>
+                                        <td class="text-white">
+                                            {% if subscriber.is_deactivated %}
+                                                <span class="text-secondary">N/A</span>
+                                            {% else %}
+                                                <i class="bi bi-calendar-check text-warning me-1"></i>
+                                                {{ subscriber.next_subscription_date|date:"F j, Y" }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-white-50 ps-0">Auto Notify:</th>
+                                        <td>
+                                            {% if subscriber.auto_notify %}
+                                                <span class="badge bg-success">Enabled</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Disabled</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-white-50 ps-0">Account Status:</th>
+                                        <td>
+                                            {% if subscriber.is_deactivated %}
+                                                <span class="badge bg-secondary">Deactivated</span>
+                                            {% elif subscriber.is_subscription_overdue %}
+                                                <span class="badge bg-danger">Overdue</span>
+                                            {% elif subscriber.is_subscription_due_soon %}
+                                                <span class="badge bg-warning text-dark">Due Soon</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mt-4">
+                    <h6 class="text-warning mb-3">
+                        <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+                    </h6>
+                    <div class="d-flex gap-2 flex-wrap">
+                        {% if not subscriber.is_deactivated %}
+                        <a href="{% url 'clients:mark_subscriber_paid' subscriber.pk %}?next={{ request.path }}" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                            <i class="bi bi-currency-dollar me-1"></i>Record Payment
+                        </a>
+                        <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="starlinkSignIn('{{ subscriber.email }}', '{{ subscriber.name }}')">
+                            <i class="bi bi-satellite me-1"></i>Starlink Login
+                        </button>
+                        <button class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="sendWhatsApp('{{ subscriber.contact }}', '{{ subscriber.name }}', '{{ subscriber.next_subscription_date|date:"Y-m-d" }}', {{ subscriber.days_until_due|default:"0" }})">
+                            <i class="bi bi-whatsapp me-1"></i>WhatsApp Reminder
+                        </button>
+                        <button class="btn btn-outline-info btn-sm rounded-pill px-3" onclick="sendEmailReminder('{{ subscriber.email }}', '{{ subscriber.name }}')">
+                            <i class="bi bi-envelope me-1"></i>Email Reminder
+                        </button>
+                        {% endif %}
+                        {% if subscriber.is_deactivated %}
+                        <button class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="showReactivationModal()">
+                            <i class="bi bi-person-check me-1"></i>Reactivate Account
+                        </button>
+                        {% else %}
+                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="deactivateSubscriber({{ subscriber.pk }})">
+                            <i class="bi bi-person-x me-1"></i>Deactivate Account
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer with timestamps -->
+            <div class="card-footer bg-transparent border-0 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-white-50">
+                        <i class="bi bi-clock me-1"></i>Created: {{ subscriber.created_at|date:"F j, Y H:i" }}
+                    </small>
+                    <small class="text-white-50">
+                        <i class="bi bi-pencil me-1"></i>Updated: {{ subscriber.updated_at|date:"F j, Y H:i" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reactivation Modal -->
+<div class="modal fade" id="reactivationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header" style="border-bottom-color: rgba(25, 135, 84, 0.2);">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-person-check text-success me-2"></i>Reactivate Subscriber
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white-50 small mb-3">
+                    Reactivate <strong class="text-white">{{ subscriber.name }}</strong> and set a new subscription period.
+                </p>
+                <div class="mb-3">
+                    <label class="text-white-50 small mb-2">Payment Date</label>
+                    <input type="date" class="form-control bg-dark text-white border-success" id="paymentDate" value="{% now 'Y-m-d' %}">
+                </div>
+                <div class="mb-3">
+                    <label class="text-white-50 small mb-2">Subscription Period</label>
+                    <select class="form-select bg-dark text-white border-success" id="subscriptionPeriod">
+                        <option value="1">1 month</option>
+                        <option value="3" selected>3 months</option>
+                        <option value="6">6 months</option>
+                        <option value="12">12 months</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="text-white-50 small mb-2">Next Subscription Date</label>
+                    <input type="date" class="form-control bg-dark text-white border-success" id="nextDate" readonly>
+                    <small class="text-white-50">Calculated automatically</small>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top-color: rgba(25, 135, 84, 0.2);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="confirmReactivation()">
+                    <i class="bi bi-check-circle me-2"></i>Reactivate
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deactivation Modal -->
+<div class="modal fade" id="deactivationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header" style="border-bottom-color: rgba(220, 53, 69, 0.2);">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-person-x text-danger me-2"></i>Deactivate Subscriber
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white-50 small mb-3">
+                    Are you sure you want to deactivate <strong class="text-white">{{ subscriber.name }}</strong>?
+                </p>
+                <div class="mb-3">
+                    <label class="text-white-50 small mb-2">Reason (optional)</label>
+                    <textarea class="form-control bg-dark text-white border-danger" id="deactivationReason" rows="3" placeholder="Enter reason for deactivation..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top-color: rgba(220, 53, 69, 0.2);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeactivation()">
+                    <i class="bi bi-person-x me-2"></i>Deactivate
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .table-borderless th,
+    .table-borderless td {
+        border: none;
+        padding: 0.5rem 0;
+    }
+    
+    .table-borderless th {
+        font-weight: 500;
+    }
+    
+    .btn-outline-success, .btn-outline-danger, .btn-outline-warning, .btn-outline-info, .btn-outline-primary {
+        border-width: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-success:hover,
+    .btn-outline-danger:hover,
+    .btn-outline-warning:hover,
+    .btn-outline-info:hover,
+    .btn-outline-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
+    }
+    
+    .modal-content {
+        border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+    }
+    
+    /* Toast container */
+    #toastContainer {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+    
+    .toast {
+        min-width: 250px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<!-- JavaScript -->
+<script>
+    // Calculate next date based on payment date and period
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentDate = document.getElementById('paymentDate');
+        const period = document.getElementById('subscriptionPeriod');
+        const nextDate = document.getElementById('nextDate');
+        
+        function calculateNextDate() {
+            if (paymentDate && paymentDate.value) {
+                const date = new Date(paymentDate.value);
+                const months = parseInt(period.value);
+                date.setMonth(date.getMonth() + months);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                nextDate.value = `${year}-${month}-${day}`;
+            }
+        }
+        
+        if (paymentDate && period && nextDate) {
+            paymentDate.addEventListener('change', calculateNextDate);
+            period.addEventListener('change', calculateNextDate);
+            calculateNextDate(); // Initial calculation
+        }
+    });
+
+    // Show reactivation modal
+    function showReactivationModal() {
+        var modal = new bootstrap.Modal(document.getElementById('reactivationModal'));
+        modal.show();
+    }
+
+    // Confirm reactivation
+    function confirmReactivation() {
+        var paymentDate = document.getElementById('paymentDate').value;
+        var period = document.getElementById('subscriptionPeriod').value;
+        var nextDate = document.getElementById('nextDate').value;
+        
+        if (!paymentDate || !nextDate) {
+            showToast('Error', 'Please select a valid date', 'error');
+            return;
+        }
+        
+        // Close modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('reactivationModal'));
+        modal.hide();
+        
+        // Show loading toast
+        showToast('Processing', 'Reactivating subscriber...', 'info');
+        
+        // Make AJAX call to reactivate
+        fetch(`/subscribers/{{ subscriber.pk }}/reactivate/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                payment_date: paymentDate,
+                next_date: nextDate,
+                months: period
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Success', 'Subscriber reactivated successfully', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showToast('Error', data.error || 'Failed to reactivate subscriber', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error', 'Failed to reactivate subscriber', 'error');
+        });
+    }
+
+    // Show deactivation modal
+    function deactivateSubscriber(id) {
+        var modal = new bootstrap.Modal(document.getElementById('deactivationModal'));
+        modal.show();
+    }
+
+    // Confirm deactivation
+    function confirmDeactivation() {
+        var reason = document.getElementById('deactivationReason').value;
+        
+        // Close modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('deactivationModal'));
+        modal.hide();
+        
+        // Show loading toast
+        showToast('Processing', 'Deactivating subscriber...', 'info');
+        
+        // Make AJAX call to deactivate
+        fetch(`/subscribers/{{ subscriber.pk }}/deactivate/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reason: reason })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Success', 'Subscriber deactivated successfully', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showToast('Error', data.error || 'Failed to deactivate subscriber', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error', 'Failed to deactivate subscriber', 'error');
+        });
+    }
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Starlink Sign In
+    function starlinkSignIn(email, name) {
+        if (!email) {
+            showToast('Error', 'No email address available', 'error');
+            return;
+        }
+        window.open('https://www.starlink.com/account', '_blank');
+        navigator.clipboard.writeText(email).then(function() {
+            showToast('Email Copied', `Email for ${name} copied to clipboard`, 'success');
+        });
+    }
+
+    // WhatsApp Reminder
+    function sendWhatsApp(contact, name, dueDate, daysLeft) {
+        if (!contact) {
+            showToast('Error', 'No contact number available', 'error');
+            return;
+        }
+        
+        let phone = contact.replace(/\D/g, '');
+        if (phone.startsWith('0')) {
+            phone = '263' + phone.substring(1);
+        } else if (!phone.startsWith('263')) {
+            phone = '263' + phone;
+        }
+        
+        let message;
+        if (daysLeft < 0) {
+            message = `Hello ${name}, your Starlink subscription was due on ${dueDate} and is now overdue by ${Math.abs(daysLeft)} days. Please make payment to avoid service interruption. Thank you.`;
+        } else if (daysLeft <= 7 && daysLeft > 0) {
+            message = `Hello ${name}, this is a friendly reminder that your Starlink subscription is due in ${daysLeft} days on ${dueDate}. Please ensure timely payment. Thank you.`;
+        } else {
+            message = `Hello ${name}, your Starlink subscription is due on ${dueDate}. Please ensure timely payment. Thank you.`;
+        }
+        
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+        showToast('WhatsApp', 'WhatsApp reminder opened', 'success');
+    }
+
+    // Email Reminder
+    function sendEmailReminder(email, name) {
+        if (!email) {
+            showToast('Error', 'No email address available', 'error');
+            return;
+        }
+        
+        const subject = encodeURIComponent('Starlink Subscription Reminder');
+        const body = encodeURIComponent(`Dear ${name},\n\nThis is a reminder about your Starlink subscription.\n\nThank you for choosing Star Space!`);
+        
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        showToast('Email', 'Email client opened', 'success');
+    }
+
+    // Toast notification
+    function showToast(title, message, type = 'info') {
+        // Create toast container if it doesn't exist
+        let toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toastContainer';
+            document.body.appendChild(toastContainer);
+        }
+        
+        const toastId = 'toast-' + Date.now();
+        const bgColor = type === 'success' ? '#198754' : 
+                       type === 'warning' ? '#ffc107' : 
+                       type === 'error' ? '#dc3545' : '#0dcaf0';
+        
+        const toastHtml = `
+            <div id="${toastId}" class="toast show align-items-center text-white" role="alert" style="background-color: ${bgColor};">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <strong>${title}:</strong> ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+        
+        toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+        
+        setTimeout(() => {
+            const toast = document.getElementById(toastId);
+            if (toast) toast.remove();
+        }, 5000);
+    }
+</script>
+{% endblock %}

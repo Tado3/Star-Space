@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>Dashboard</h2>
+        <p>Welcome to Star Space Management System</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card primary">
+            <h5>Total Installations</h5>
+            <h2>{{ total_installations }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card success">
+            <h5>Active Subscribers</h5>
+            <h2>{{ total_active }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card warning">
+            <h5>Due Soon (7 days)</h5>
+            <h2>{{ due_soon }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card danger">
+            <h5>Overdue</h5>
+            <h2>{{ overdue }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Kit Type Distribution</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Standard
+                        <span class="badge bg-primary rounded-pill">{{ kit_type_stats.standard }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Mini
+                        <span class="badge bg-secondary rounded-pill">{{ kit_type_stats.mini }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Installations</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for installation in recent_installations %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ installation.name }}
+                        <small>{{ installation.installation_date }}</small>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">No recent installations</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

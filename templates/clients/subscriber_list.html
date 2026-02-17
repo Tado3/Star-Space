@@ -1,0 +1,1280 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4 px-xl-5" style="max-width: 100%; overflow-x: hidden;">
+    <!-- Header with Star Space Branding -->
+    <div class="position-relative mb-4">
+        <div class="bg-gradient-star p-3 p-md-4 rounded-4 shadow-lg" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill me-3" style="font-size: 0.85rem; font-weight: 600; white-space: nowrap;">
+                            <i class="bi bi-people-fill me-1"></i>TOTAL {{ subscribers|length }}
+                        </span>
+                        <h1 class="text-white fw-bold mb-0 h4 h3-md" style="white-space: nowrap;">
+                            <i class="bi bi-people me-2 text-warning"></i>Subscribers
+                        </h1>
+                    </div>
+                    <p class="text-white-50 mb-0 small">
+                        <i class="bi bi-graph-up me-1 text-warning"></i>Manage and monitor all your Starlink subscribers
+                    </p>
+                </div>
+                <a href="{% url 'clients:add_subscriber' %}" class="btn btn-warning px-4 py-2 rounded-pill shadow-sm hover-scale align-self-start align-self-md-center" style="font-size: 0.9rem; font-weight: 600; white-space: nowrap;">
+                    <i class="bi bi-plus-circle me-1"></i>Add New Subscriber
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards Row - Responsive Grid -->
+    <div class="row g-2 g-md-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 hover-lift" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%); border-left: 4px solid #ffc107;">
+                <div class="card-body p-2 p-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded-3">
+                                <i class="bi bi-people text-warning" style="font-size: 1.2rem; font-size-md: 1.5rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-2 ms-md-3">
+                            <div class="text-white-50 small">Total</div>
+                            <div class="text-warning fw-bold" style="font-size: 1.1rem; font-size-md: 1.3rem;">{{ subscribers|length }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 hover-lift" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%); border-left: 4px solid #198754;">
+                <div class="card-body p-2 p-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 p-2 rounded-3">
+                                <i class="bi bi-check-circle text-success" style="font-size: 1.2rem; font-size-md: 1.5rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-2 ms-md-3">
+                            <div class="text-white-50 small">Active</div>
+                            <div class="text-success fw-bold" style="font-size: 1.1rem; font-size-md: 1.3rem;">{{ active_count|default:"0" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 hover-lift" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%); border-left: 4px solid #ffc107;">
+                <div class="card-body p-2 p-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded-3">
+                                <i class="bi bi-exclamation-triangle text-warning" style="font-size: 1.2rem; font-size-md: 1.5rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-2 ms-md-3">
+                            <div class="text-white-50 small">Due Soon</div>
+                            <div class="text-warning fw-bold" style="font-size: 1.1rem; font-size-md: 1.3rem;">{{ due_soon_count|default:"0" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 hover-lift" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%); border-left: 4px solid #dc3545;">
+                <div class="card-body p-2 p-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger bg-opacity-10 p-2 rounded-3">
+                                <i class="bi bi-exclamation-circle text-danger" style="font-size: 1.2rem; font-size-md: 1.5rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-2 ms-md-3">
+                            <div class="text-white-50 small">Overdue</div>
+                            <div class="text-danger fw-bold" style="font-size: 1.1rem; font-size-md: 1.3rem;">{{ overdue_count|default:"0" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 hover-lift" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%); border-left: 4px solid #6c757d;">
+                <div class="card-body p-2 p-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-secondary bg-opacity-10 p-2 rounded-3">
+                                <i class="bi bi-person-x text-secondary" style="font-size: 1.2rem; font-size-md: 1.5rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-2 ms-md-3">
+                            <div class="text-white-50 small">Deactivated</div>
+                            <div class="text-secondary fw-bold" style="font-size: 1.1rem; font-size-md: 1.3rem;">{{ deactivated_count|default:"0" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 hover-lift" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%); border-left: 4px solid #0d6efd;">
+                <div class="card-body p-2 p-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-3">
+                                <i class="bi bi-arrow-repeat text-primary" style="font-size: 1.2rem; font-size-md: 1.5rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-2 ms-md-3">
+                            <div class="text-white-50 small">Reactivate</div>
+                            <div class="text-primary fw-bold" style="font-size: 1.1rem; font-size-md: 1.3rem;">{{ deactivated_count|default:"0" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search Bar - Responsive Stack -->
+    <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+        <div class="card-body p-3">
+            <div class="row g-2">
+                <div class="col-12 col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-0 text-warning px-3" style="font-size: 0.9rem;">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control bg-dark border-0 text-white" id="searchInput" 
+                               placeholder="Search..." onkeyup="filterTable()" 
+                               style="font-size: 0.9rem; padding: 0.5rem 0.75rem;">
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <select class="form-select bg-dark border-0 text-white" id="kitTypeFilter" onchange="filterTable()" 
+                            style="font-size: 0.9rem; padding: 0.5rem 0.75rem;">
+                        <option value="all">Kit Type</option>
+                        <option value="STANDARD">Standard</option>
+                        <option value="MINI">Mini</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <select class="form-select bg-dark border-0 text-white" id="statusFilter" onchange="filterTable()" 
+                            style="font-size: 0.9rem; padding: 0.5rem 0.75rem;">
+                        <option value="all">Payment</option>
+                        <option value="active">Active</option>
+                        <option value="due-soon">Due Soon</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <select class="form-select bg-dark border-0 text-white" id="accountStatusFilter" onchange="filterTable()" 
+                            style="font-size: 0.9rem; padding: 0.5rem 0.75rem;">
+                        <option value="all">Account</option>
+                        <option value="active">Active</option>
+                        <option value="deactivated">Deactivated</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <button class="btn btn-outline-warning w-100" onclick="resetFilters()" 
+                            style="font-size: 0.9rem; padding: 0.5rem 0.75rem; border-width: 2px; white-space: nowrap;">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card border-0 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%); border-radius: 15px;">
+        <!-- Card Header with Export Options - Responsive -->
+        <div class="card-header bg-transparent border-0 pt-3 pt-md-4 px-3 px-md-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                <div>
+                    <h5 class="fw-bold mb-1 text-white h5">
+                        <i class="bi bi-list-check me-1 text-warning"></i>Subscribers List
+                    </h5>
+                    <p class="text-white-50 mb-0 small" id="tableInfo">
+                        <i class="bi bi-info-circle me-1 text-warning"></i>
+                        Showing <span id="visibleCount">{{ subscribers|length }}</span> of {{ subscribers|length }}
+                    </p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button class="btn btn-outline-warning rounded-start px-2 px-md-3 py-1" onclick="exportToCSV()" style="font-size: 0.8rem; border-width: 2px; white-space: nowrap;">
+                            <i class="bi bi-download me-1"></i>CSV
+                        </button>
+                        <button class="btn btn-outline-warning px-2 px-md-3 py-1" onclick="exportToExcel()" style="font-size: 0.8rem; border-width: 2px; white-space: nowrap;">
+                            <i class="bi bi-file-excel me-1"></i>Excel
+                        </button>
+                        <button class="btn btn-outline-warning rounded-end px-2 px-md-3 py-1" onclick="window.print()" style="font-size: 0.8rem; border-width: 2px; white-space: nowrap;">
+                            <i class="bi bi-printer me-1"></i>Print
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm px-2 px-md-3 py-1" onclick="toggleColumnVisibility()" style="font-size: 0.8rem; border-width: 2px; white-space: nowrap;">
+                        <i class="bi bi-table me-1"></i>Columns
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body p-0">
+            {% if subscribers %}
+            <!-- Responsive Table with Horizontal Scroll -->
+            <div class="table-responsive" style="min-height: 400px; overflow-x: auto; overflow-y: auto; max-height: 800px; width: 100%;">
+                <table class="table table-hover align-middle mb-0" id="subscribersTable" style="width: 100%; min-width: 1400px;">
+                    <thead class="bg-dark" style="position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th class="border-0 py-3 ps-4" style="width: 50px; font-size: 0.8rem; background: #1a2a3a;">Select</th>
+                            <th class="border-0 py-3 text-white" onclick="sortTable(1)" style="cursor: pointer; font-size: 0.8rem; background: #1a2a3a; min-width: 180px;">
+                                Customer <i class="bi bi-arrow-down-up ms-1 text-warning small"></i>
+                            </th>
+                            <th class="border-0 py-3 text-white" style="font-size: 0.8rem; background: #1a2a3a; min-width: 180px;">Contact</th>
+                            <th class="border-0 py-3 text-white text-center" style="font-size: 0.8rem; background: #1a2a3a; min-width: 90px;">WhatsApp</th>
+                            <th class="border-0 py-3 text-white text-center" style="font-size: 0.8rem; background: #1a2a3a; min-width: 90px;">Starlink</th>
+                            <th class="border-0 py-3 text-white" style="font-size: 0.8rem; background: #1a2a3a; min-width: 80px;">Kit Type</th>
+                            <th class="border-0 py-3 text-white" style="font-size: 0.8rem; background: #1a2a3a; min-width: 110px;">Last Sub</th>
+                            <th class="border-0 py-3 text-white" style="font-size: 0.8rem; background: #1a2a3a; min-width: 180px;">Next Sub</th>
+                            <th class="border-0 py-3 text-white" style="font-size: 0.8rem; background: #1a2a3a; min-width: 100px;">Account</th>
+                            <th class="border-0 py-3 text-white text-center" style="font-size: 0.8rem; background: #1a2a3a; min-width: 250px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subscriber in subscribers %}
+                        {% with days=subscriber.days_until_due %}
+                        <tr class="subscriber-row 
+                            {% if subscriber.is_deactivated %}deactivated-row
+                            {% elif subscriber.is_subscription_overdue %}overdue-row
+                            {% elif subscriber.is_subscription_due_soon %}due-soon-row
+                            {% endif %}"
+                            data-name="{{ subscriber.name|lower }}"
+                            data-email="{{ subscriber.email|lower }}"
+                            data-contact="{{ subscriber.contact }}"
+                            data-kit="{{ subscriber.kit_type }}"
+                            data-payment-status="{% if subscriber.is_subscription_overdue %}overdue{% elif subscriber.is_subscription_due_soon %}due-soon{% else %}active{% endif %}"
+                            data-account-status="{% if subscriber.is_deactivated %}deactivated{% else %}active{% endif %}">
+                            
+                            <td class="ps-4" style="padding: 0.75rem 0.5rem;">
+                                <input class="form-check-input subscriber-checkbox" type="checkbox" value="{{ subscriber.pk }}" 
+                                       data-email="{{ subscriber.email }}" {% if subscriber.is_deactivated %}disabled{% endif %}>
+                            </td>
+                            
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle 
+                                        {% if subscriber.is_deactivated %}bg-secondary
+                                        {% elif subscriber.is_subscription_overdue %}bg-danger
+                                        {% elif subscriber.is_subscription_due_soon %}bg-warning
+                                        {% else %}bg-success{% endif %} me-2 me-md-3" 
+                                         style="width: 35px; height: 35px; width-md: 45px; height-md: 45px; font-size: 1rem; font-size-md: 1.2rem; flex-shrink: 0;">
+                                        {{ subscriber.name|make_list|first|upper }}
+                                    </div>
+                                    <div style="overflow: hidden;">
+                                        <div class="fw-bold text-white" style="font-size: 0.9rem; font-size-md: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            {{ subscriber.name|truncatechars:20 }}
+                                        </div>
+                                        <div class="text-white-50 small" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            {{ subscriber.email|truncatechars:20 }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <div class="d-flex flex-column">
+                                    <span class="text-white-50 small" style="white-space: nowrap;">
+                                        <i class="bi bi-telephone-fill text-warning me-1 small"></i>
+                                        {{ subscriber.contact|truncatechars:12 }}
+                                    </span>
+                                    <span class="text-white-50 small" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        <i class="bi bi-envelope text-warning me-1 small"></i>
+                                        {{ subscriber.email|truncatechars:15 }}
+                                    </span>
+                                </div>
+                            </td>
+                            
+                            <td class="text-center" style="padding: 0.75rem 0.5rem;">
+                                {% if subscriber.contact and not subscriber.is_deactivated %}
+                                <a href="#" onclick="sendWhatsApp('{{ subscriber.contact }}', '{{ subscriber.name }}', '{{ subscriber.next_subscription_date|date:"Y-m-d" }}', {{ subscriber.days_until_due|default:"0" }})" 
+                                   class="btn btn-success btn-sm rounded-pill px-2 py-1" 
+                                   data-bs-toggle="tooltip" title="WhatsApp"
+                                   style="font-size: 0.75rem; white-space: nowrap;">
+                                    <i class="bi bi-whatsapp me-1"></i>Send
+                                </a>
+                                {% else %}
+                                <span class="text-white-50 small">-</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td class="text-center" style="padding: 0.75rem 0.5rem;">
+                                {% if not subscriber.is_deactivated %}
+                                <button onclick="starlinkSignIn('{{ subscriber.email }}', '{{ subscriber.name }}')" 
+                                        class="btn btn-outline-primary btn-sm rounded-pill px-2 py-1"
+                                        data-bs-toggle="tooltip" title="Starlink Login"
+                                        style="font-size: 0.75rem; border-width: 2px; white-space: nowrap;">
+                                    <i class="bi bi-satellite me-1"></i>Login
+                                </button>
+                                {% else %}
+                                <span class="text-white-50 small">-</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <span class="badge {% if subscriber.kit_type == 'STANDARD' %}bg-primary{% else %}bg-secondary{% endif %} px-2 py-1 rounded-pill" 
+                                      style="font-size: 0.75rem; white-space: nowrap;">
+                                    {{ subscriber.get_kit_type_display|truncatechars:5 }}
+                                </span>
+                            </td>
+                            
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                    <i class="bi bi-calendar-check text-warning me-1 small"></i>
+                                    <span class="text-white small">
+                                        {{ subscriber.last_subscription_date|date:"m/d/y" }}
+                                    </span>
+                                </div>
+                            </td>
+                            
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                    {% if subscriber.is_deactivated %}
+                                    <span class="text-secondary small">Deactivated</span>
+                                    {% else %}
+                                    <i class="bi bi-calendar-check 
+                                        {% if subscriber.is_subscription_overdue %}text-danger
+                                        {% elif subscriber.is_subscription_due_soon %}text-warning
+                                        {% else %}text-success{% endif %} me-1 small"></i>
+                                    <span class="{% if subscriber.is_subscription_overdue %}text-danger
+                                                 {% elif subscriber.is_subscription_due_soon %}text-warning
+                                                 {% else %}text-white{% endif %} small">
+                                        {{ subscriber.next_subscription_date|date:"m/d/y" }}
+                                    </span>
+                                    {% if days and days != 0 %}
+                                    <span class="text-white-50 ms-1 small">({{ days }}d)</span>
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                            
+                            <td style="padding: 0.75rem 0.5rem;">
+                                {% if subscriber.is_deactivated %}
+                                <span class="badge bg-secondary rounded-pill px-2 py-1 small">
+                                    <i class="bi bi-person-x me-1"></i>Inactive
+                                </span>
+                                {% else %}
+                                <span class="badge bg-success rounded-pill px-2 py-1 small">
+                                    <i class="bi bi-check-circle me-1"></i>Active
+                                </span>
+                                {% endif %}
+                            </td>
+                            
+                            <td class="text-center" style="padding: 0.75rem 0.5rem;">
+                                <div class="d-flex gap-1 justify-content-center flex-wrap">
+                                    <!-- View Button -->
+                                    <a href="{% url 'clients:subscriber_detail' subscriber.pk %}" 
+                                       class="btn btn-outline-info btn-sm rounded-pill px-2 py-1" 
+                                       data-bs-toggle="tooltip" title="View"
+                                       style="font-size: 0.75rem; border-width: 2px; white-space: nowrap;">
+                                        <i class="bi bi-eye me-1"></i>View
+                                    </a>
+                                    
+                                    <!-- Edit Button - Only for Active -->
+                                    {% if not subscriber.is_deactivated %}
+                                    <a href="{% url 'clients:edit_subscriber' subscriber.pk %}" 
+                                       class="btn btn-outline-warning btn-sm rounded-pill px-2 py-1"
+                                       data-bs-toggle="tooltip" title="Edit"
+                                       style="font-size: 0.75rem; border-width: 2px; white-space: nowrap;">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </a>
+                                    {% endif %}
+                                    
+                                    <!-- Pay Button - Only for Active -->
+                                    {% if not subscriber.is_deactivated %}
+                                    <a href="{% url 'clients:mark_subscriber_paid' subscriber.pk %}?next={{ request.path|urlencode }}" 
+                                       class="btn btn-outline-success btn-sm rounded-pill px-2 py-1"
+                                       data-bs-toggle="tooltip" title="Pay"
+                                       style="font-size: 0.75rem; border-width: 2px; white-space: nowrap;">
+                                        <i class="bi bi-currency-dollar me-1"></i>Pay
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Table Footer with Bulk Actions - Responsive -->
+            <div class="card-footer bg-transparent border-0 py-2 py-md-3 px-3 px-md-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <span class="text-white-50 small">
+                            <i class="bi bi-check2-square me-1"></i>
+                            <span id="selectedCount">0</span> selected
+                        </span>
+                        <button class="btn btn-link text-warning p-0 small" onclick="selectAllVisible()">
+                            Select Visible
+                        </button>
+                        <button class="btn btn-link text-danger p-0 small" onclick="clearSelection()">
+                            Clear
+                        </button>
+                    </div>
+                    
+                    <div class="d-flex gap-1 flex-wrap">
+                        
+                        <button class="btn btn-primary btn-sm px-2 py-1" onclick="bulkStarlinkCopy()" style="font-size: 0.75rem; white-space: nowrap;">
+                            <i class="bi bi-satellite me-1"></i>Copy
+                        </button>
+                        <button class="btn btn-danger btn-sm px-2 py-1" onclick="bulkDeactivateSelected()" style="font-size: 0.75rem; white-space: nowrap;">
+                            <i class="bi bi-person-x me-1"></i>Deactivate
+                        </button>
+                        <select class="form-select form-select-sm bg-dark text-white border-warning" id="bulkStatusChange" 
+                                style="width: 100px; font-size: 0.75rem; padding: 0.15rem 0.5rem;">
+                            <option value="">Actions</option>
+                            <option value="active">Set Active</option>
+                            <option value="notified">Notified</option>
+                            <option value="reminder">Reminder</option>
+                            <option value="deactivate" class="text-danger">Deactivate</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <div class="position-relative mb-4">
+                    <i class="bi bi-people text-warning opacity-25" style="font-size: 5rem;"></i>
+                    <i class="bi bi-plus-circle-fill text-warning position-absolute top-50 start-50 translate-middle" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-2 text-white">No Subscribers Yet</h5>
+                <p class="text-white-50 mb-3 small">Get started by adding your first subscriber.</p>
+                <a href="{% url 'clients:add_subscriber' %}" class="btn btn-warning px-4 py-2 rounded-pill">
+                    <i class="bi bi-plus-circle me-1"></i>Add First Subscriber
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Reactivation Options Modal -->
+    <div class="modal fade" id="reactivationOptionsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header py-2 py-md-3 px-3 px-md-4">
+                    <h6 class="modal-title text-white">
+                        <i class="bi bi-person-check text-success me-2"></i>Reactivate Subscriber
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white btn-sm" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-3 p-md-4">
+                    <div class="mb-3">
+                        <label class="text-white-50 small mb-1">Next subscription date</label>
+                        <input type="date" class="form-control form-control-sm bg-dark text-white border-success" id="reactivationDate" 
+                               value="{% now 'Y-m-d' %}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="text-white-50 small mb-1">Period</label>
+                        <select class="form-select form-select-sm bg-dark text-white border-success" id="reactivationPeriod">
+                            <option value="1">1 month</option>
+                            <option value="3" selected>3 months</option>
+                            <option value="6">6 months</option>
+                            <option value="12">12 months</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer py-2 px-3 px-md-4">
+                    <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success btn-sm px-4" id="confirmReactivationBtn">Reactivate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deactivation Reason Modal -->
+    <div class="modal fade" id="deactivationReasonModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header py-2 py-md-3 px-3 px-md-4">
+                    <h6 class="modal-title text-white">
+                        <i class="bi bi-person-x text-danger me-2"></i>Deactivation Reason
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white btn-sm" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-3 p-md-4">
+                    <textarea class="form-control form-control-sm bg-dark text-white border-danger" id="deactivationReason" rows="2" 
+                              placeholder="Reason (optional)"></textarea>
+                </div>
+                <div class="modal-footer py-2 px-3 px-md-4">
+                    <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-sm px-4" id="confirmDeactivationBtn">Deactivate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Column Visibility Modal -->
+    <div class="modal fade" id="columnModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header py-2 px-3">
+                    <h6 class="modal-title text-white small">
+                        <i class="bi bi-table me-2 text-warning"></i>Show/Hide Columns
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white btn-sm" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input column-toggle" type="checkbox" value="1" id="colCustomer" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colCustomer">Customer</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input column-toggle" type="checkbox" value="2" id="colContact" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colContact">Contact</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input column-toggle" type="checkbox" value="3" id="colWhatsApp" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colWhatsApp">WhatsApp</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input column-toggle" type="checkbox" value="4" id="colStarlink" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colStarlink">Starlink</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input column-toggle" type="checkbox" value="5" id="colKit" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colKit">Kit Type</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input column-toggle" type="checkbox" value="6" id="colLast" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colLast">Last Sub</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input column-toggle" type="checkbox" value="7" id="colNext" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colNext">Next Sub</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input column-toggle" type="checkbox" value="8" id="colAccountStatus" checked>
+                        <label class="form-check-label text-white ms-2 small" for="colAccountStatus">Account</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles - Responsive -->
+<style>
+    /* Base styles */
+    .bg-gradient-star {
+        background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+    }
+    
+    /* Avatar styles - Responsive */
+    .avatar-circle {
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #1a2a3a;
+        flex-shrink: 0;
+    }
+    
+    .avatar-circle.bg-danger { background-color: #dc3545 !important; }
+    .avatar-circle.bg-warning { background-color: #ffc107 !important; }
+    .avatar-circle.bg-success { background-color: #198754 !important; }
+    .avatar-circle.bg-secondary { background-color: #6c757d !important; }
+    
+    /* Hover effects */
+    .hover-scale { transition: transform 0.3s ease; }
+    .hover-scale:hover { transform: scale(1.02); }
+    
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(255, 193, 7, 0.15) !important;
+    }
+    
+    /* Row styles */
+    .subscriber-row {
+        transition: all 0.3s ease;
+    }
+    .subscriber-row:hover {
+        background-color: rgba(255, 193, 7, 0.05) !important;
+    }
+    
+    .overdue-row { border-left: 4px solid #dc3545; }
+    .due-soon-row { border-left: 4px solid #ffc107; }
+    .deactivated-row { border-left: 4px solid #6c757d; opacity: 0.7; }
+    
+    .overdue-row:hover { background-color: rgba(220, 53, 69, 0.05) !important; }
+    .due-soon-row:hover { background-color: rgba(255, 193, 7, 0.05) !important; }
+    .deactivated-row:hover { background-color: rgba(108, 117, 125, 0.05) !important; }
+    
+    /* Table styles */
+    .table th {
+        font-weight: 600;
+        font-size: 0.8rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        background: #1a2a3a !important;
+        color: white !important;
+        white-space: nowrap;
+        border-bottom: 2px solid rgba(255, 193, 7, 0.3) !important;
+    }
+    
+    .table td {
+        vertical-align: middle;
+        padding: 0.75rem 0.5rem !important;
+        color: white;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Scrollbar styling */
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: #1a2a3a;
+        border-radius: 10px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #ffc107;
+        border-radius: 10px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #e0a800;
+    }
+    
+    /* Card styling */
+    .card {
+        border-radius: 15px !important;
+        overflow: hidden;
+        border: none !important;
+    }
+    
+    /* Button styling */
+    .btn-sm {
+        padding: 0.15rem 0.5rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .btn-outline-warning, .btn-outline-info, .btn-outline-success, .btn-outline-primary, .btn-outline-danger {
+        border-width: 2px;
+        font-weight: 500;
+    }
+    
+    /* Form controls */
+    .form-control, .form-select {
+        background-color: #1a2a3a !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+    }
+    
+    .input-group-text {
+        background-color: #1a2a3a !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Modal styles */
+    .modal-content {
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        border-radius: 15px;
+    }
+    
+    /* Checkbox styling */
+    .form-check-input {
+        cursor: pointer;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+    }
+    
+    .form-check-input:checked {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .form-check-input:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    }
+    
+    /* Badge styling */
+    .badge {
+        font-weight: 500;
+        line-height: 1.2;
+    }
+    
+    /* Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .subscriber-row {
+        animation: fadeIn 0.3s ease;
+    }
+    
+    /* Toast container */
+    #toastContainer {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        max-width: 90%;
+    }
+    
+    .toast {
+        min-width: 250px;
+        margin-bottom: 8px;
+        font-size: 0.8rem !important;
+        background: #1a2a3a;
+        color: white;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    /* Responsive font sizes */
+    @media (min-width: 768px) {
+        .table td {
+            font-size: 1rem !important;
+            padding: 1rem 0.75rem !important;
+        }
+        
+        .avatar-circle {
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.75rem !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .small {
+            font-size: 0.875rem !important;
+        }
+    }
+    
+    /* Ensure no horizontal overflow */
+    body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    .container-fluid {
+        overflow-x: hidden;
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    /* Fix for metrics cards on small screens */
+    @media (max-width: 576px) {
+        .col-6 {
+            padding: 0 4px;
+        }
+        .card-body {
+            padding: 0.5rem !important;
+        }
+        .ms-2 {
+            margin-left: 0.25rem !important;
+        }
+    }
+</style>
+
+<!-- JavaScript for Interactive Features -->
+<script>
+    
+    
+    // Store commonly used passwords
+    const STARLINK_PASSWORDS = {
+        standard: 'Starlink2024!',
+        backup: 'SpaceX@123',
+        admin: 'St@rlinkAdmin2024'
+    };
+
+    // Store current subscriber ID
+    let currentSubscriberId = null;
+
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
+    // Select All functionality
+    document.getElementById('selectAll').addEventListener('change', function(e) {
+        var checkboxes = document.querySelectorAll('.subscriber-checkbox:not(:disabled)');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = e.target.checked;
+        });
+        updateSelectedCount();
+    });
+
+    function updateSelectedCount() {
+        var checkboxes = document.querySelectorAll('.subscriber-checkbox:checked');
+        document.getElementById('selectedCount').textContent = checkboxes.length;
+    }
+
+    document.querySelectorAll('.subscriber-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+
+    function clearSelection() {
+        document.querySelectorAll('.subscriber-checkbox').forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        document.getElementById('selectAll').checked = false;
+        updateSelectedCount();
+    }
+
+    function selectAllVisible() {
+        var visibleRows = document.querySelectorAll('.subscriber-row:not(.filtered-out) .subscriber-checkbox:not(:disabled)');
+        visibleRows.forEach(function(checkbox) {
+            checkbox.checked = true;
+        });
+        updateSelectedCount();
+    }
+
+    // Process bulk payment
+    function processBulkPayment() {
+        var selected = document.querySelectorAll('.subscriber-checkbox:checked');
+        if (selected.length === 0) {
+            showToast('No Selection', 'Please select at least one subscriber.', 'warning');
+            return;
+        }
+        
+        var ids = Array.from(selected).map(cb => cb.value).join(',');
+        window.location.href = `/subscribers/bulk-mark-paid/?ids=${ids}&next={{ request.path|urlencode }}`;
+    }
+
+    // Filter table function
+    function filterTable() {
+        var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        var kitFilter = document.getElementById('kitTypeFilter').value;
+        var statusFilter = document.getElementById('statusFilter').value;
+        var accountFilter = document.getElementById('accountStatusFilter').value;
+        var rows = document.querySelectorAll('.subscriber-row');
+        var visibleCount = 0;
+        
+        rows.forEach(function(row) {
+            var name = row.getAttribute('data-name');
+            var email = row.getAttribute('data-email');
+            var contact = row.getAttribute('data-contact');
+            var kit = row.getAttribute('data-kit');
+            var paymentStatus = row.getAttribute('data-payment-status');
+            var accountStatus = row.getAttribute('data-account-status');
+            
+            var matchesSearch = name.includes(searchTerm) || email.includes(searchTerm) || contact.includes(searchTerm);
+            var matchesKit = kitFilter === 'all' || kit === kitFilter;
+            var matchesPaymentStatus = statusFilter === 'all' || paymentStatus === statusFilter;
+            var matchesAccountStatus = accountFilter === 'all' || accountStatus === accountFilter;
+            
+            if (matchesSearch && matchesKit && matchesPaymentStatus && matchesAccountStatus) {
+                row.style.display = '';
+                row.classList.remove('filtered-out');
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+                row.classList.add('filtered-out');
+            }
+        });
+        
+        document.getElementById('visibleCount').textContent = visibleCount;
+        document.getElementById('selectAll').checked = false;
+        clearSelection();
+    }
+
+    // Reset filters
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('kitTypeFilter').value = 'all';
+        document.getElementById('statusFilter').value = 'all';
+        document.getElementById('accountStatusFilter').value = 'all';
+        filterTable();
+    }
+
+    // Sort table
+    function sortTable(columnIndex) {
+        var table = document.getElementById('subscribersTable');
+        var rows = Array.from(table.querySelectorAll('tbody tr'));
+        var header = table.querySelectorAll('th')[columnIndex];
+        var isAscending = header.classList.contains('sort-asc');
+        
+        table.querySelectorAll('th').forEach(th => {
+            th.classList.remove('sort-asc', 'sort-desc');
+        });
+        
+        rows.sort(function(a, b) {
+            var aVal = a.cells[columnIndex].textContent.trim();
+            var bVal = b.cells[columnIndex].textContent.trim();
+            
+            if (!isNaN(Date.parse(aVal))) {
+                return isAscending ? 
+                    new Date(aVal) - new Date(bVal) : 
+                    new Date(bVal) - new Date(aVal);
+            }
+            
+            return isAscending ? 
+                aVal.localeCompare(bVal) : 
+                bVal.localeCompare(aVal);
+        });
+        
+        var tbody = table.querySelector('tbody');
+        rows.forEach(row => tbody.appendChild(row));
+        
+        header.classList.add(isAscending ? 'sort-desc' : 'sort-asc');
+    }
+
+    // Export to CSV
+    function exportToCSV() {
+        var csv = [];
+        var rows = document.querySelectorAll("#subscribersTable tbody tr:not(.filtered-out)");
+        
+        var headers = ['Name', 'Contact', 'Email', 'WhatsApp', 'Starlink', 'Kit Type', 'Last Subscription', 'Next Subscription', 'Account Status'];
+        csv.push(headers.join(','));
+        
+        rows.forEach(function(row) {
+            if (row.style.display !== 'none') {
+                var rowData = [
+                    row.querySelector('td:nth-child(2) .fw-bold').textContent,
+                    row.querySelector('td:nth-child(3) span').textContent.trim(),
+                    row.querySelector('td:nth-child(2) .text-white-50').textContent,
+                    row.querySelector('td:nth-child(4) .btn') ? 'Yes' : 'No',
+                    row.querySelector('td:nth-child(5) .btn') ? 'Yes' : 'No',
+                    row.querySelector('td:nth-child(6) .badge').textContent.trim(),
+                    row.querySelector('td:nth-child(7)').textContent.trim(),
+                    row.querySelector('td:nth-child(8)').textContent.trim().split('\n')[0],
+                    row.querySelector('td:nth-child(9) .badge').textContent.trim()
+                ];
+                csv.push(rowData.map(cell => '"' + cell + '"').join(','));
+            }
+        });
+        
+        downloadCSV(csv.join('\n'), 'subscribers.csv');
+    }
+
+    function downloadCSV(csv, filename) {
+        var csvFile = new Blob([csv], {type: 'text/csv'});
+        var downloadLink = document.createElement('a');
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.click();
+        showToast('Export Complete', 'File downloaded successfully', 'success');
+    }
+
+    function exportToExcel() {
+        exportToCSV();
+    }
+
+    // Toggle column visibility
+    function toggleColumnVisibility() {
+        var modal = new bootstrap.Modal(document.getElementById('columnModal'));
+        modal.show();
+    }
+
+    document.querySelectorAll('.column-toggle').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var columnIndex = parseInt(this.value);
+            var cells = document.querySelectorAll(`#subscribersTable td:nth-child(${columnIndex + 1}), #subscribersTable th:nth-child(${columnIndex + 1})`);
+            cells.forEach(function(cell) {
+                cell.style.display = this.checked ? '' : 'none';
+            }.bind(this));
+        });
+    });
+
+    // Deactivate subscriber
+    function deactivateSubscriber(id) {
+        currentSubscriberId = id;
+        document.getElementById('deactivationReason').value = '';
+        var modal = new bootstrap.Modal(document.getElementById('deactivationReasonModal'));
+        modal.show();
+    }
+
+    document.getElementById('confirmDeactivationBtn').addEventListener('click', function() {
+        var reason = document.getElementById('deactivationReason').value;
+        var id = currentSubscriberId;
+        
+        if (!id) return;
+        
+        var reasonModal = bootstrap.Modal.getInstance(document.getElementById('deactivationReasonModal'));
+        reasonModal.hide();
+        
+        fetch(`/subscribers/${id}/deactivate/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reason: reason })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Success', 'Subscriber deactivated successfully', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast('Error', data.error || 'Failed to deactivate', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error', 'Failed to deactivate', 'error');
+        });
+    });
+
+    // Reactivate subscriber
+    function reactivateSubscriber(id) {
+        currentSubscriberId = id;
+        
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('reactivationDate').value = today;
+        
+        var modal = new bootstrap.Modal(document.getElementById('reactivationOptionsModal'));
+        modal.show();
+    }
+
+    document.getElementById('confirmReactivationBtn').addEventListener('click', function() {
+        var id = currentSubscriberId;
+        var newDate = document.getElementById('reactivationDate').value;
+        var months = parseInt(document.getElementById('reactivationPeriod').value);
+        
+        if (!id || !newDate) return;
+        
+        var optionsModal = bootstrap.Modal.getInstance(document.getElementById('reactivationOptionsModal'));
+        optionsModal.hide();
+        
+        fetch(`/subscribers/${id}/reactivate/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                new_date: newDate,
+                months: months
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Success', 'Subscriber reactivated successfully', 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast('Error', data.error || 'Failed to reactivate', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error', 'Failed to reactivate', 'error');
+        });
+    });
+
+    // Bulk deactivate
+    function bulkDeactivateSelected() {
+        var selected = document.querySelectorAll('.subscriber-checkbox:checked');
+        if (selected.length === 0) {
+            showToast('No Selection', 'Please select at least one subscriber', 'warning');
+            return;
+        }
+        
+        if (confirm(`Are you sure you want to deactivate ${selected.length} selected subscribers?`)) {
+            var ids = Array.from(selected).map(cb => cb.value);
+            
+            fetch('/subscribers/bulk-deactivate/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ids: ids })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Success', `${data.count} subscribers deactivated successfully`, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error', data.error || 'Failed to deactivate', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error', 'Failed to deactivate', 'error');
+            });
+        }
+    }
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Enhanced Starlink Sign In
+    function starlinkSignIn(email, name) {
+        if (!email) {
+            showToast('Error', 'No email address available', 'error');
+            return;
+        }
+        
+        window.open('https://www.starlink.com/account', '_blank');
+        
+        navigator.clipboard.writeText(email).then(function() {
+            showToast('Email Copied', `Email for ${name} copied to clipboard`, 'success');
+        }).catch(function(err) {
+            showToast('Error', 'Could not copy email. Please copy manually.', 'error');
+        });
+    }
+
+    // WhatsApp
+    function sendWhatsApp(contact, name, dueDate, daysLeft) {
+        if (!contact) {
+            showToast('Error', 'No contact number', 'error');
+            return;
+        }
+        let phone = contact.replace(/\D/g, '');
+        if (phone.startsWith('0')) phone = '263' + phone.substring(1);
+        else if (!phone.startsWith('263')) phone = '263' + phone;
+        
+        let message;
+        if (daysLeft < 0) {
+            message = `Hello ${name}, your Starlink subscription was due on ${dueDate} and is now overdue by ${Math.abs(daysLeft)} days. Please make payment.`;
+        } else if (daysLeft <= 7 && daysLeft > 0) {
+            message = `Hello ${name}, your Starlink subscription is due in ${daysLeft} days on ${dueDate}. Please ensure payment.`;
+        } else {
+            message = `Hello ${name}, your Starlink subscription is due on ${dueDate}. Please ensure payment.`;
+        }
+        
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+        showToast('WhatsApp', 'WhatsApp opened', 'success');
+    }
+
+    function sendBulkWhatsAppSelected() {
+        var selected = document.querySelectorAll('.subscriber-checkbox:checked');
+        if (selected.length === 0) {
+            showToast('No Selection', 'Please select subscribers', 'warning');
+            return;
+        }
+        showToast('Info', `WhatsApp would be sent to ${selected.length} subscribers`, 'info');
+    }
+
+    function sendCustomWhatsApp(id) {
+        showToast('Info', 'Custom WhatsApp feature', 'info');
+    }
+
+    function quickExtend(id) {
+        showToast('Info', 'Extension feature', 'info');
+    }
+
+    function markNotified(id) {
+        showToast('Success', 'Marked as notified', 'success');
+    }
+
+    function viewHistory(id) {
+        showToast('Info', 'View payment history feature', 'info');
+    }
+
+    function permanentDelete(id) {
+        if (confirm('Are you sure you want to permanently delete this subscriber? This action cannot be undone.')) {
+            showToast('Success', 'Subscriber deleted permanently', 'success');
+        }
+    }
+
+    // Bulk Starlink copy
+    function bulkStarlinkCopy() {
+        var selected = document.querySelectorAll('.subscriber-checkbox:checked');
+        if (selected.length === 0) {
+            showToast('No Selection', 'Please select subscribers', 'warning');
+            return;
+        }
+        
+        var emails = [];
+        selected.forEach(function(cb) {
+            var email = cb.getAttribute('data-email');
+            if (email) emails.push(email);
+        });
+        
+        navigator.clipboard.writeText(emails.join('\n')).then(function() {
+            showToast('Copied', `${emails.length} emails copied`, 'success');
+        }).catch(function(err) {
+            showToast('Error', 'Could not copy emails', 'error');
+        });
+    }
+
+    // Bulk actions
+    document.getElementById('bulkStatusChange').addEventListener('change', function() {
+        var selected = document.querySelectorAll('.subscriber-checkbox:checked');
+        if (selected.length === 0) {
+            showToast('No Selection', 'Please select at least one subscriber', 'warning');
+            this.value = '';
+            return;
+        }
+        
+        var action = this.value;
+        if (action === 'deactivate') {
+            bulkDeactivateSelected();
+        } else if (action) {
+            showToast('Bulk Action', `${action} applied to ${selected.length} subscribers`, 'info');
+        }
+        this.value = '';
+    });
+
+    // Toast notification
+    function showToast(title, message, type = 'info') {
+        var toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toastContainer';
+            toastContainer.style.position = 'fixed';
+            toastContainer.style.top = '10px';
+            toastContainer.style.right = '10px';
+            toastContainer.style.zIndex = '9999';
+            document.body.appendChild(toastContainer);
+        }
+        
+        var toast = document.createElement('div');
+        toast.className = `toast show align-items-center text-white bg-${type} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>${title}:</strong> ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto btn-sm" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+</script>
+{% endblock %}

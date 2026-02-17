@@ -1,0 +1,541 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header with Star Space Branding -->
+<div class="position-relative mb-4">
+    <div class="bg-gradient-star p-4 rounded-4 shadow-lg" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <div class="d-flex align-items-center mb-2">
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill me-3">
+                        <i class="bi bi-person-plus-fill me-1"></i>Subscriber
+                    </span>
+                    <h2 class="text-white fw-bold mb-0">
+                        <i class="bi bi-person-plus me-2 text-warning"></i>
+                        {% if form.instance.pk %}Edit{% else %}Add New{% endif %} Subscriber
+                    </h2>
+                </div>
+                <p class="text-white-50 mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    {% if form.instance.pk %}
+                        Update the subscriber's information below
+                    {% else %}
+                        Fill in the details to add a new active subscriber
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <!-- Main Form Card -->
+        <div class="card border-0 shadow-lg overflow-hidden">
+            <!-- Card Header with Steps -->
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <div class="d-flex align-items-center">
+                    <div class="step-indicator me-3">
+                        <span class="step-circle bg-warning text-dark">1</span>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1" style="color: #1a2a3a;">Subscriber Information</h5>
+                        <p class="text-muted small mb-0">Enter the subscriber's personal and subscription details</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="post" id="subscriberForm" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Personal Information Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <h6 class="fw-bold mb-3" style="color: #1a2a3a;">
+                                <i class="bi bi-person-badge me-2 text-warning"></i>Personal Details
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" 
+                                       class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.name.id_for_label }}" 
+                                       name="{{ form.name.name }}" 
+                                       value="{{ form.name.value|default:'' }}"
+                                       placeholder="Full Name"
+                                       required>
+                                <label for="{{ form.name.id_for_label }}">
+                                    <i class="bi bi-person me-2 text-warning"></i>{{ form.name.label }}
+                                </label>
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" 
+                                       class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.email.id_for_label }}" 
+                                       name="{{ form.email.name }}" 
+                                       value="{{ form.email.value|default:'' }}"
+                                       placeholder="Email Address"
+                                       required>
+                                <label for="{{ form.email.id_for_label }}">
+                                    <i class="bi bi-envelope me-2 text-warning"></i>{{ form.email.label }}
+                                </label>
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="tel" 
+                                       class="form-control {% if form.contact.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.contact.id_for_label }}" 
+                                       name="{{ form.contact.name }}" 
+                                       value="{{ form.contact.value|default:'' }}"
+                                       placeholder="Contact Number"
+                                       required>
+                                <label for="{{ form.contact.id_for_label }}">
+                                    <i class="bi bi-telephone me-2 text-warning"></i>{{ form.contact.label }}
+                                </label>
+                                {% if form.contact.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.contact.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <select class="form-select {% if form.kit_type.errors %}is-invalid{% endif %}" 
+                                        id="{{ form.kit_type.id_for_label }}" 
+                                        name="{{ form.kit_type.name }}"
+                                        required>
+                                    {% for value, label in form.fields.kit_type.choices %}
+                                        <option value="{{ value }}" {% if form.kit_type.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="{{ form.kit_type.id_for_label }}">
+                                    <i class="bi bi-router me-2 text-warning"></i>{{ form.kit_type.label }}
+                                </label>
+                                {% if form.kit_type.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.kit_type.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subscription Details Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <h6 class="fw-bold mb-3" style="color: #1a2a3a;">
+                                <i class="bi bi-calendar-check me-2 text-warning"></i>Subscription Details
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" 
+                                       class="form-control {% if form.last_subscription_date.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.last_subscription_date.id_for_label }}" 
+                                       name="{{ form.last_subscription_date.name }}" 
+                                       value="{{ form.last_subscription_date.value|date:'Y-m-d'|default:'' }}"
+                                       placeholder="Last Subscription Date"
+                                       required>
+                                <label for="{{ form.last_subscription_date.id_for_label }}">
+                                    <i class="bi bi-calendar-check me-2 text-warning"></i>{{ form.last_subscription_date.label }}
+                                </label>
+                                {% if form.last_subscription_date.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.last_subscription_date.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" 
+                                       class="form-control {% if form.next_subscription_date.errors %}is-invalid{% endif %}" 
+                                       id="{{ form.next_subscription_date.id_for_label }}" 
+                                       name="{{ form.next_subscription_date.name }}" 
+                                       value="{{ form.next_subscription_date.value|date:'Y-m-d'|default:'' }}"
+                                       placeholder="Next Subscription Date"
+                                       required>
+                                <label for="{{ form.next_subscription_date.id_for_label }}">
+                                    <i class="bi bi-calendar-plus me-2 text-warning"></i>{{ form.next_subscription_date.label }}
+                                </label>
+                                {% if form.next_subscription_date.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.next_subscription_date.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status and Preferences Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <h6 class="fw-bold mb-3" style="color: #1a2a3a;">
+                                <i class="bi bi-gear me-2 text-warning"></i>Status & Preferences
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card bg-light border-0">
+                                <div class="card-body">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" 
+                                               id="{{ form.is_active.id_for_label }}" 
+                                               name="{{ form.is_active.name }}"
+                                               {% if form.is_active.value %}checked{% endif %}>
+                                        <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                            <i class="bi bi-check-circle me-1 {% if form.is_active.value %}text-success{% endif %}"></i>
+                                            Active Status
+                                        </label>
+                                        <div class="form-text text-muted small">
+                                            Toggle to activate/deactivate this subscriber
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card bg-light border-0">
+                                <div class="card-body">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" 
+                                               id="{{ form.auto_notify.id_for_label }}" 
+                                               name="{{ form.auto_notify.name }}"
+                                               {% if form.auto_notify.value %}checked{% endif %}>
+                                        <label class="form-check-label" for="{{ form.auto_notify.id_for_label }}">
+                                            <i class="bi bi-bell me-1 {% if form.auto_notify.value %}text-warning{% endif %}"></i>
+                                            Auto Notifications
+                                        </label>
+                                        <div class="form-text text-muted small">
+                                            Send automatic reminders for subscription renewals
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger border-0" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                        <div>
+                            {% if form.instance.pk %}
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>
+                                    Last updated: {% now "M d, Y H:i" %}
+                                </small>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'clients:subscriber_list' %}" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning btn-lg px-5">
+                                <i class="bi bi-check-circle me-2"></i>
+                                {% if form.instance.pk %}Update{% else %}Save{% endif %} Subscriber
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Help Card -->
+        <div class="card border-0 shadow-sm mt-4 bg-light">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-question-circle-fill text-warning fs-2"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="fw-bold mb-1" style="color: #1a2a3a;">Need Help?</h6>
+                        <p class="text-muted small mb-0">
+                            Make sure all required fields are filled correctly. 
+                            The next subscription date must be after the last subscription date.
+                            Contact support if you need assistance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .bg-gradient-star {
+        background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+    }
+    
+    .step-indicator {
+        display: flex;
+        align-items: center;
+    }
+    
+    .step-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    /* Form styling */
+    .form-floating > .form-control,
+    .form-floating > .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1rem 0.75rem;
+        height: calc(3.5rem + 2px);
+        transition: all 0.3s ease;
+    }
+    
+    .form-floating > .form-control:focus,
+    .form-floating > .form-select:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+    }
+    
+    .form-floating > label {
+        padding: 1rem 0.75rem;
+        color: #6c757d;
+    }
+    
+    /* Switch styling */
+    .form-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+        margin-right: 0.5em;
+        cursor: pointer;
+        border: 2px solid #dee2e6;
+    }
+    
+    .form-switch .form-check-input:checked {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .form-switch .form-check-input:focus {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffc107'/%3e%3c/svg%3e");
+        border-color: #ffc107;
+    }
+    
+    /* Card hover effect */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+    }
+    
+    .card:hover {
+        box-shadow: 0 12px 24px rgba(255, 193, 7, 0.1) !important;
+    }
+    
+    /* Button styling */
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #1a2a3a;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #e0a800;
+        color: #1a2a3a;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(255, 193, 7, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border: 2px solid #dee2e6;
+        color: #6c757d;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    /* Input validation styling */
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .invalid-feedback {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        color: #dc3545;
+    }
+    
+    /* Alert styling */
+    .alert-danger {
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+        border-radius: 8px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .btn-warning, .btn-outline-secondary {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .form-floating > .form-control,
+        .form-floating > .form-select {
+            font-size: 1rem;
+        }
+    }
+    
+    /* Animation for form appearance */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .card {
+        animation: slideIn 0.5s ease;
+    }
+    
+    /* Date input styling */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(0.5);
+        cursor: pointer;
+        padding: 4px;
+    }
+    
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        filter: invert(0.7);
+    }
+    
+    /* Tooltip customization */
+    [data-bs-toggle="tooltip"] {
+        cursor: help;
+    }
+</style>
+
+<!-- JavaScript for form validation and interactivity -->
+<script>
+    (function() {
+        'use strict';
+        
+        // Fetch all forms that need validation
+        var forms = document.querySelectorAll('.needs-validation');
+        
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // Auto-format phone numbers (optional)
+        const phoneInput = document.getElementById('{{ form.contact.id_for_label }}');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+                e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+            });
+        }
+        
+        // Validate dates
+        const lastDate = document.getElementById('{{ form.last_subscription_date.id_for_label }}');
+        const nextDate = document.getElementById('{{ form.next_subscription_date.id_for_label }}');
+        
+        if (lastDate && nextDate) {
+            nextDate.addEventListener('change', function() {
+                if (lastDate.value && nextDate.value && new Date(nextDate.value) <= new Date(lastDate.value)) {
+                    nextDate.setCustomValidity('Next subscription date must be after last subscription date');
+                } else {
+                    nextDate.setCustomValidity('');
+                }
+            });
+            
+            lastDate.addEventListener('change', function() {
+                if (lastDate.value && nextDate.value && new Date(nextDate.value) <= new Date(lastDate.value)) {
+                    nextDate.setCustomValidity('Next subscription date must be after last subscription date');
+                } else {
+                    nextDate.setCustomValidity('');
+                }
+            });
+        }
+    })();
+    
+    // Show confirmation before leaving with unsaved changes
+    let formChanged = false;
+    const form = document.getElementById('subscriberForm');
+    const formInputs = form.querySelectorAll('input, select, textarea');
+    
+    formInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            formChanged = true;
+        });
+    });
+    
+    window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+    
+    form.addEventListener('submit', () => {
+        formChanged = false;
+    });
+</script>
+{% endblock %}

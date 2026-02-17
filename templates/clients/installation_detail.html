@@ -1,0 +1,314 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Header with Star Space Branding -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: #1a2a3a;">Installation Details</h2>
+            <p class="text-muted">
+                <i class="bi bi-info-circle me-2" style="color: #ffc107;"></i>
+                View complete information about this installation
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'clients:installation_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Main Details Card -->
+            <div class="card border-0 shadow-lg mb-4" style="border-radius: 15px; background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge mb-2" style="background: #ffc107; color: #1a2a3a; font-size: 0.9rem;">
+                                <i class="bi bi-tools me-1"></i>
+                                {% if installation.installation_type == 'STARLINK' %}
+                                    Starlink Installation
+                                {% elif installation.installation_type == 'CCTV' %}
+                                    CCTV Installation
+                                {% elif installation.installation_type == 'NETWORKING' %}
+                                    Networking Installation
+                                {% elif installation.installation_type == 'SOLAR' %}
+                                    Solar Installation
+                                {% endif %}
+                            </span>
+                            <h3 class="fw-bold mb-0" style="color: #ffc107;">{{ installation.name }}</h3>
+                            <p class="text-white-50 small mb-0">Installation Client</p>
+                        </div>
+                        <div>
+                            <a href="{% url 'clients:edit_installation' installation.pk %}" class="btn btn-warning">
+                                <i class="bi bi-pencil-square me-2"></i>Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Installation Type Badge -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-block p-3 rounded-circle mb-3" style="background: rgba(255, 193, 7, 0.1);">
+                            {% if installation.installation_type == 'STARLINK' %}
+                                <i class="bi bi-router" style="font-size: 3rem; color: #ffc107;"></i>
+                            {% elif installation.installation_type == 'CCTV' %}
+                                <i class="bi bi-camera-reels" style="font-size: 3rem; color: #ffc107;"></i>
+                            {% elif installation.installation_type == 'NETWORKING' %}
+                                <i class="bi bi-hdd-network" style="font-size: 3rem; color: #ffc107;"></i>
+                            {% elif installation.installation_type == 'SOLAR' %}
+                                <i class="bi bi-brightness-high" style="font-size: 3rem; color: #ffc107;"></i>
+                            {% endif %}
+                        </div>
+                        <h4 class="fw-bold" style="color: #ffc107;">
+                            {{ installation.get_installation_type_display }}
+                        </h4>
+                    </div>
+
+                    <!-- Client Information Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3" style="color: #ffc107; border-bottom: 2px solid rgba(255, 193, 7, 0.3); padding-bottom: 10px;">
+                                <i class="bi bi-person-badge me-2"></i>Client Information
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <div class="me-3">
+                                    <i class="bi bi-person-circle fs-1" style="color: #ffc107;"></i>
+                                </div>
+                                <div>
+                                    <small class="text-white-50 text-uppercase">Full Name</small>
+                                    <h6 class="fw-bold mb-0 text-white">{{ installation.name }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <div class="me-3">
+                                    <i class="bi bi-envelope fs-1" style="color: #ffc107;"></i>
+                                </div>
+                                <div>
+                                    <small class="text-white-50 text-uppercase">Email Address</small>
+                                    <h6 class="fw-bold mb-0 text-white">{{ installation.email|default:"Not provided" }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <div class="me-3">
+                                    <i class="bi bi-telephone fs-1" style="color: #ffc107;"></i>
+                                </div>
+                                <div>
+                                    <small class="text-white-50 text-uppercase">Contact Number</small>
+                                    <h6 class="fw-bold mb-0 text-white">
+                                        <a href="tel:{{ installation.contact }}" class="text-white text-decoration-none">{{ installation.contact }}</a>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <div class="me-3">
+                                    <i class="bi bi-calendar-check fs-1" style="color: #ffc107;"></i>
+                                </div>
+                                <div>
+                                    <small class="text-white-50 text-uppercase">Installation Date</small>
+                                    <h6 class="fw-bold mb-0 text-white">{{ installation.installation_date|date:"F d, Y" }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Installation Details Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3" style="color: #ffc107; border-bottom: 2px solid rgba(255, 193, 7, 0.3); padding-bottom: 10px;">
+                                <i class="bi bi-gear me-2"></i>Installation Details
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <small class="text-white-50 text-uppercase d-block mb-2">Installation Type</small>
+                                <div class="d-flex align-items-center">
+                                    {% if installation.installation_type == 'STARLINK' %}
+                                        <i class="bi bi-router me-2" style="color: #ffc107;"></i>
+                                    {% elif installation.installation_type == 'CCTV' %}
+                                        <i class="bi bi-camera-reels me-2" style="color: #ffc107;"></i>
+                                    {% elif installation.installation_type == 'NETWORKING' %}
+                                        <i class="bi bi-hdd-network me-2" style="color: #ffc107;"></i>
+                                    {% elif installation.installation_type == 'SOLAR' %}
+                                        <i class="bi bi-brightness-high me-2" style="color: #ffc107;"></i>
+                                    {% endif %}
+                                    <span class="fw-bold text-white">{{ installation.get_installation_type_display }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <small class="text-white-50 text-uppercase d-block mb-2">Invoice Status</small>
+                                <div class="d-flex align-items-center">
+                                    {% if installation.invoice %}
+                                        <i class="bi bi-file-pdf-fill me-2" style="color: #ffc107;"></i>
+                                        <span class="fw-bold text-white">Invoice Available</span>
+                                    {% else %}
+                                        <i class="bi bi-file-x me-2" style="color: #dc3545;"></i>
+                                        <span class="fw-bold text-white-50">No Invoice Uploaded</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if installation.notes %}
+                    <!-- Notes Section -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3" style="color: #ffc107; border-bottom: 2px solid rgba(255, 193, 7, 0.3); padding-bottom: 10px;">
+                                <i class="bi bi-chat-text me-2"></i>Additional Notes
+                            </h5>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05);">
+                                <p class="text-white mb-0">{{ installation.notes|linebreaks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if installation.invoice %}
+                    <!-- Invoice Section -->
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="p-3 rounded-3" style="background: rgba(255, 193, 7, 0.1); border-left: 4px solid #ffc107;">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-pdf-fill fs-1 me-3" style="color: #ffc107;"></i>
+                                        <div>
+                                            <h6 class="fw-bold mb-1" style="color: #ffc107;">Invoice Document</h6>
+                                            <small class="text-white-50">{{ installation.invoice.name|truncatechars:40 }}</small>
+                                        </div>
+                                    </div>
+                                    <a href="{{ installation.invoice.url }}" target="_blank" class="btn btn-warning">
+                                        <i class="bi bi-download me-2"></i>Download
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-footer bg-transparent border-0 p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-white-50">
+                            <i class="bi bi-clock me-1"></i>
+                            Created: {{ installation.created_at|date:"F d, Y H:i" }}
+                        </small>
+                        <small class="text-white-50">
+                            <i class="bi bi-arrow-repeat me-1"></i>
+                            Last Updated: {{ installation.updated_at|date:"F d, Y H:i" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="card border-0 shadow-sm" style="border-radius: 15px; background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color: #ffc107;">
+                        <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="{% url 'clients:edit_installation' installation.pk %}" class="btn btn-outline-warning w-100 py-3">
+                                <i class="bi bi-pencil-square d-block fs-4 mb-2"></i>
+                                <span>Edit Details</span>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="mailto:{{ installation.email }}" class="btn btn-outline-info w-100 py-3">
+                                <i class="bi bi-envelope d-block fs-4 mb-2"></i>
+                                <span>Send Email</span>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="tel:{{ installation.contact }}" class="btn btn-outline-success w-100 py-3">
+                                <i class="bi bi-telephone d-block fs-4 mb-2"></i>
+                                <span>Call Client</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .btn-outline-warning {
+        color: #ffc107;
+        border-color: #ffc107;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-warning:hover {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #1a2a3a;
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-info {
+        color: #0dcaf0;
+        border-color: #0dcaf0;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-info:hover {
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+        color: #1a2a3a;
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-success {
+        color: #198754;
+        border-color: #198754;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-success:hover {
+        background-color: #198754;
+        border-color: #198754;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(255, 193, 7, 0.15) !important;
+    }
+    
+    @media (max-width: 768px) {
+        .btn-outline-warning, .btn-outline-info, .btn-outline-success {
+            padding: 0.75rem !important;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,840 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Header with Star Space Branding -->
+<div class="position-relative mb-4">
+    <div class="bg-gradient-star p-4 rounded-4 shadow-lg" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <div class="d-flex align-items-center mb-2">
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill me-3">
+                        <i class="bi bi-tools me-1"></i>TOTAL {{ installations|length }}
+                    </span>
+                    <h2 class="text-white fw-bold mb-0">
+                        <i class="bi bi-tools me-2 text-warning"></i>Installation Clients
+                    </h2>
+                </div>
+                <p class="text-white-50 mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Manage and track all your installation projects
+                </p>
+            </div>
+            <a href="{% url 'clients:add_installation' %}" class="btn btn-warning btn-lg rounded-pill px-4 shadow-sm hover-scale">
+                <i class="bi bi-plus-circle me-2"></i>New Installation
+            </a>
+        </div>
+    </div>
+    
+    <!-- Decorative Elements -->
+    <div class="position-absolute top-0 end-0 p-4 opacity-10">
+       
+    </div>
+</div>
+
+<!-- Statistics Cards Row -->
+<div class="row g-4 mb-4">
+    <!-- Total Installations Card -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 hover-lift" style="border-left: 4px solid #ffc107; background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-tools text-warning fs-2"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">Total Installations</h6>
+                        <h3 class="fw-bold mb-0 text-white">{{ installations|length }}</h3>
+                        <small class="text-white-50">All time</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- This Month Card -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 hover-lift" style="border-left: 4px solid #198754; background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-calendar-check text-success fs-2"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">This Month</h6>
+                        <h3 class="fw-bold mb-0 text-success">{{ this_month_count|default:"0" }}</h3>
+                        <small class="text-white-50">{% now "F Y" %}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Installation Type Distribution Card -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100 hover-lift" style="border-left: 4px solid #ffc107; background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+            <div class="card-body">
+                <h6 class="text-white-50 mb-2">Installation Types</h6>
+                <div class="d-flex flex-wrap gap-3">
+                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2">
+                        <i class="bi bi-router me-1"></i>Starlink: {{ starlink_count|default:"0" }}
+                    </span>
+                    <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">
+                        <i class="bi bi-camera-reels me-1"></i>CCTV: {{ cctv_count|default:"0" }}
+                    </span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                        <i class="bi bi-hdd-network me-1"></i>Networking: {{ networking_count|default:"0" }}
+                    </span>
+                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">
+                        <i class="bi bi-brightness-high me-1"></i>Solar: {{ solar_count|default:"0" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters and Search Bar -->
+<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+    <div class="card-body">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-0 text-warning">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control bg-dark border-0 text-white" id="searchInput" 
+                           placeholder="Search by name or contact..." onkeyup="filterTable()" style="color: white !important;">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select bg-dark border-0 text-white" id="installationTypeFilter" onchange="filterTable()" style="color: white !important;">
+                    <option value="all" class="text-white">All Installation Types</option>
+                    <option value="STARLINK" class="text-white">Starlink</option>
+                    <option value="CCTV" class="text-white">CCTV</option>
+                    <option value="NETWORKING" class="text-white">Networking</option>
+                    <option value="SOLAR" class="text-white">Solar</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control bg-dark border-0 text-white" id="dateFilter" 
+                       placeholder="Filter by date" onchange="filterTable()" style="color: white !important;">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-warning w-100" onclick="resetFilters()">
+                    <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Table Card -->
+<div class="card border-0 shadow-lg overflow-hidden" style="background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);">
+    <!-- Card Header with Export Options -->
+    <div class="card-header bg-transparent border-0 pt-4 px-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h5 class="fw-bold mb-1 text-white">
+                    <i class="bi bi-list-check me-2 text-warning"></i>Installations List
+                </h5>
+                <p class="text-white-50 small mb-0" id="tableInfo">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Showing <span id="visibleCount">{{ installations|length }}</span> of {{ installations|length }} installations
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-warning btn-sm rounded-start" onclick="exportToCSV()">
+                        <i class="bi bi-download me-1"></i>CSV
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="exportToExcel()">
+                        <i class="bi bi-file-excel me-1"></i>Excel
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm rounded-end" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i>Print
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-body p-0">
+        {% if installations %}
+        <!-- Responsive Table -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="installationsTable">
+                <thead class="bg-dark">
+                    <tr>
+                        <th class="border-0 py-3 ps-4" style="width: 30px;">
+                            <input class="form-check-input" type="checkbox" id="selectAll">
+                        </th>
+                        <th class="border-0 py-3 text-white" onclick="sortTable(1)" style="cursor: pointer;">
+                            Customer <i class="bi bi-arrow-down-up ms-1"></i>
+                        </th>
+                        <th class="border-0 py-3 text-white">Contact</th>
+                        <th class="border-0 py-3 text-white">Installation Type</th>
+                        <th class="border-0 py-3 text-white" onclick="sortTable(4)" style="cursor: pointer;">
+                            Installation Date <i class="bi bi-arrow-down-up ms-1"></i>
+                        </th>
+                        <th class="border-0 py-3 text-white">Invoice</th>
+                        <th class="border-0 py-3 text-white text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for installation in installations %}
+                    <tr class="installation-row"
+                        data-name="{{ installation.name|lower }}"
+                        data-contact="{{ installation.contact }}"
+                        data-type="{{ installation.installation_type }}"
+                        data-date="{{ installation.installation_date|date:'Y-m-d' }}">
+                        
+                        <td class="ps-4">
+                            <input class="form-check-input installation-checkbox" type="checkbox" value="{{ installation.pk }}">
+                        </td>
+                        
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle bg-warning bg-opacity-10 text-warning me-3">
+                                    {{ installation.name|make_list|first|upper }}
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-white">{{ installation.name }}</h6>
+                                    <small class="text-white-50">{{ installation.email|default:""|truncatechars:25 }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="d-flex flex-column">
+                                <a href="tel:{{ installation.contact }}" class="text-decoration-none text-white-50">
+                                    <i class="bi bi-telephone-fill text-warning me-1 small"></i>
+                                    {{ installation.contact }}
+                                </a>
+                                {% if installation.email %}
+                                <a href="mailto:{{ installation.email }}" class="text-decoration-none small text-white-50">
+                                    <i class="bi bi-envelope text-warning me-1"></i>Send email
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            {% if installation.installation_type == 'STARLINK' %}
+                            <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">
+                                <i class="bi bi-router me-1"></i>Starlink
+                            </span>
+                            {% elif installation.installation_type == 'CCTV' %}
+                            <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill">
+                                <i class="bi bi-camera-reels me-1"></i>CCTV
+                            </span>
+                            {% elif installation.installation_type == 'NETWORKING' %}
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
+                                <i class="bi bi-hdd-network me-1"></i>Networking
+                            </span>
+                            {% elif installation.installation_type == 'SOLAR' %}
+                            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+                                <i class="bi bi-brightness-high me-1"></i>Solar
+                            </span>
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar-check text-warning me-2"></i>
+                                <span class="fw-medium text-white">{{ installation.installation_date|date:"M d, Y" }}</span>
+                                {% if installation.installation_date|date:"Y-m-d" == now|date:"Y-m-d" %}
+                                    <span class="badge bg-success ms-2">Today</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            {% if installation.invoice %}
+                            <a href="{{ installation.invoice.url }}" target="_blank" class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                <i class="bi bi-file-pdf me-1"></i>View
+                            </a>
+                            {% else %}
+                            <span class="badge bg-dark text-white-50">No invoice</span>
+                            {% endif %}
+                        </td>
+                        
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'clients:installation_detail' installation.pk %}" 
+                                   class="btn btn-sm btn-outline-info rounded-pill px-3" 
+                                   data-bs-toggle="tooltip" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'clients:edit_installation' installation.pk %}" 
+                                   class="btn btn-sm btn-outline-warning rounded-pill px-3 ms-1"
+                                   data-bs-toggle="tooltip" title="Edit Installation">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <div class="btn-group ms-1">
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-secondary rounded-pill px-3 dropdown-toggle"
+                                            data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end bg-dark">
+                                        <li><a class="dropdown-item text-white" href="#" onclick="quickActions({{ installation.pk }}, 'email')">
+                                            <i class="bi bi-envelope text-warning me-2"></i>Send Email
+                                        </a></li>
+                                        <li><a class="dropdown-item text-white" href="#" onclick="quickActions({{ installation.pk }}, 'reminder')">
+                                            <i class="bi bi-bell text-warning me-2"></i>Send Reminder
+                                        </a></li>
+                                        {% if installation.invoice %}
+                                        <li><hr class="dropdown-divider bg-secondary"></li>
+                                        <li><a class="dropdown-item text-white" href="{{ installation.invoice.url }}" target="_blank">
+                                            <i class="bi bi-file-pdf text-warning me-2"></i>Download Invoice
+                                        </a></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Table Footer with Bulk Actions -->
+        <div class="card-footer bg-transparent border-0 py-3 px-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="d-flex align-items-center">
+                    <span class="text-white-50 small me-3">
+                        <i class="bi bi-check2-square me-1"></i>
+                        <span id="selectedCount">0</span> selected
+                    </span>
+                    <button class="btn btn-link btn-sm text-warning p-0 me-3" onclick="selectAllVisible()">
+                        Select Visible
+                    </button>
+                    <button class="btn btn-link btn-sm text-danger p-0" onclick="clearSelection()">
+                        Clear
+                    </button>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button class="btn btn-warning btn-sm" onclick="exportSelected()">
+                        <i class="bi bi-download me-2"></i>Export Selected
+                    </button>
+                    <select class="form-select form-select-sm bg-dark text-white border-warning" id="bulkActions">
+                        <option value="" class="text-white">Bulk Actions</option>
+                        <option value="email" class="text-white">Send Email</option>
+                        <option value="reminder" class="text-white">Send Reminder</option>
+                        <option value="export" class="text-white">Export</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <!-- Enhanced Empty State -->
+        <div class="text-center py-5">
+            <div class="position-relative mb-4">
+                <i class="bi bi-tools display-1 text-warning opacity-25" style="font-size: 6rem;"></i>
+                <i class="bi bi-plus-circle-fill text-warning position-absolute top-50 start-50 translate-middle" style="font-size: 3rem;"></i>
+            </div>
+            <h3 class="fw-bold mb-3 text-white">No Installations Yet</h3>
+            <p class="text-white-50 mb-4">Get started by scheduling your first installation project.</p>
+            <a href="{% url 'clients:add_installation' %}" class="btn btn-warning btn-lg rounded-pill px-5">
+                <i class="bi bi-plus-circle me-2"></i>Add Your First Installation
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .bg-gradient-star {
+        background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+    }
+    
+    .avatar-circle {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+    
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+        transform: scale(1.02);
+    }
+    
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(255, 193, 7, 0.15) !important;
+    }
+    
+    .installation-row {
+        transition: all 0.3s ease;
+        background: transparent !important;
+    }
+    
+    .installation-row:hover {
+        background: rgba(255, 193, 7, 0.05) !important;
+        transform: translateY(-2px);
+    }
+    
+    .table th {
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        background: #1a2a3a !important;
+    }
+    
+    .table td {
+        vertical-align: middle;
+        padding: 1rem 0.75rem;
+        color: white;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .btn-group .btn {
+        transition: all 0.3s ease;
+        border-width: 2px;
+    }
+    
+    .btn-group .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
+    }
+    
+    /* Custom scrollbar */
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: #1a2a3a;
+        border-radius: 10px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #ffc107;
+        border-radius: 10px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #e0a800;
+    }
+    
+    /* Card styling */
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .rounded-4 {
+        border-radius: 15px;
+    }
+    
+    /* Checkbox styling */
+    .form-check-input {
+        cursor: pointer;
+        border-width: 2px;
+        background: transparent;
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .form-check-input:checked {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    
+    .form-check-input:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+    }
+    
+    /* Button styling */
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #1a2a3a;
+        font-weight: 600;
+    }
+    
+    .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #e0a800;
+        color: #1a2a3a;
+    }
+    
+    .btn-outline-warning {
+        color: #ffc107;
+        border-color: #ffc107;
+        border-width: 2px;
+    }
+    
+    .btn-outline-warning:hover {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #1a2a3a;
+    }
+    
+    .btn-outline-info {
+        color: #0dcaf0;
+        border-color: #0dcaf0;
+        border-width: 2px;
+    }
+    
+    .btn-outline-info:hover {
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+        color: #1a2a3a;
+    }
+    
+    .btn-outline-secondary {
+        color: #6c757d;
+        border-color: #6c757d;
+        border-width: 2px;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+    
+    /* Badge styling */
+    .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: #1a2a3a !important;
+    }
+    
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        background: #1a2a3a !important;
+        border: 1px solid rgba(255, 193, 7, 0.2) !important;
+    }
+    
+    .dropdown-item:hover {
+        background: rgba(255, 193, 7, 0.1) !important;
+        color: #ffc107 !important;
+    }
+    
+    /* Form controls */
+    .form-control, .form-select {
+        background-color: #1a2a3a !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #ffc107 !important;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    .input-group-text {
+        background-color: #1a2a3a !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .table td {
+            min-width: 150px;
+        }
+        
+        .bg-gradient-star {
+            padding: 2rem 1rem !important;
+        }
+    }
+    
+    /* Animation for new items */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .installation-row {
+        animation: fadeIn 0.5s ease;
+    }
+    
+    /* Tooltip customization */
+    .tooltip {
+        font-size: 0.85rem;
+    }
+    
+    .tooltip-inner {
+        background-color: #ffc107;
+        color: #1a2a3a;
+    }
+    
+    .bs-tooltip-top .tooltip-arrow::before {
+        border-top-color: #ffc107;
+    }
+</style>
+
+<!-- JavaScript for Interactive Features -->
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
+    // Select All functionality
+    document.getElementById('selectAll').addEventListener('change', function(e) {
+        var checkboxes = document.querySelectorAll('.installation-checkbox');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = e.target.checked;
+        });
+        updateSelectedCount();
+    });
+
+    // Update selected count
+    function updateSelectedCount() {
+        var checkboxes = document.querySelectorAll('.installation-checkbox:checked');
+        document.getElementById('selectedCount').textContent = checkboxes.length;
+    }
+
+    // Add event listeners to all checkboxes
+    document.querySelectorAll('.installation-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+
+    // Clear selection
+    function clearSelection() {
+        document.querySelectorAll('.installation-checkbox').forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        document.getElementById('selectAll').checked = false;
+        updateSelectedCount();
+    }
+
+    // Select all visible rows
+    function selectAllVisible() {
+        var visibleRows = document.querySelectorAll('.installation-row:not(.filtered-out) .installation-checkbox');
+        visibleRows.forEach(function(checkbox) {
+            checkbox.checked = true;
+        });
+        updateSelectedCount();
+    }
+
+    // Filter table function
+    function filterTable() {
+        var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        var typeFilter = document.getElementById('installationTypeFilter').value;
+        var dateFilter = document.getElementById('dateFilter').value;
+        var rows = document.querySelectorAll('.installation-row');
+        var visibleCount = 0;
+        
+        rows.forEach(function(row) {
+            var name = row.getAttribute('data-name');
+            var contact = row.getAttribute('data-contact');
+            var type = row.getAttribute('data-type');
+            var date = row.getAttribute('data-date');
+            
+            var matchesSearch = name.includes(searchTerm) || contact.includes(searchTerm);
+            var matchesType = typeFilter === 'all' || type === typeFilter;
+            var matchesDate = !dateFilter || date === dateFilter;
+            
+            if (matchesSearch && matchesType && matchesDate) {
+                row.style.display = '';
+                row.classList.remove('filtered-out');
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+                row.classList.add('filtered-out');
+            }
+        });
+        
+        document.getElementById('visibleCount').textContent = visibleCount;
+        document.getElementById('selectAll').checked = false;
+        clearSelection();
+    }
+
+    // Reset filters
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('installationTypeFilter').value = 'all';
+        document.getElementById('dateFilter').value = '';
+        filterTable();
+    }
+
+    // Sort table
+    function sortTable(columnIndex) {
+        var table = document.getElementById('installationsTable');
+        var rows = Array.from(table.querySelectorAll('tbody tr'));
+        var header = table.querySelectorAll('th')[columnIndex];
+        var isAscending = header.classList.contains('sort-asc');
+        
+        table.querySelectorAll('th').forEach(th => {
+            th.classList.remove('sort-asc', 'sort-desc');
+        });
+        
+        rows.sort(function(a, b) {
+            var aVal = a.cells[columnIndex].textContent.trim();
+            var bVal = b.cells[columnIndex].textContent.trim();
+            
+            if (columnIndex === 4) { // Date column
+                aVal = a.getAttribute('data-date');
+                bVal = b.getAttribute('data-date');
+            }
+            
+            if (!isNaN(Date.parse(aVal))) {
+                return isAscending ? 
+                    new Date(aVal) - new Date(bVal) : 
+                    new Date(bVal) - new Date(aVal);
+            }
+            
+            return isAscending ? 
+                aVal.localeCompare(bVal) : 
+                bVal.localeCompare(aVal);
+        });
+        
+        var tbody = table.querySelector('tbody');
+        rows.forEach(row => tbody.appendChild(row));
+        
+        header.classList.add(isAscending ? 'sort-desc' : 'sort-asc');
+    }
+
+    // Export to CSV
+    function exportToCSV() {
+        var csv = [];
+        var rows = document.querySelectorAll("#installationsTable tbody tr:not(.filtered-out)");
+        
+        var headers = ['Name', 'Contact', 'Email', 'Installation Type', 'Installation Date', 'Notes'];
+        csv.push(headers.join(','));
+        
+        rows.forEach(function(row) {
+            if (row.style.display !== 'none') {
+                var rowData = [
+                    row.querySelector('td:nth-child(2) .fw-bold').textContent,
+                    row.querySelector('td:nth-child(3) a').textContent.trim(),
+                    row.querySelector('td:nth-child(2) small').textContent || '',
+                    row.querySelector('td:nth-child(4) .badge').textContent.trim(),
+                    row.querySelector('td:nth-child(5)').textContent.trim(),
+                    '' // Notes placeholder
+                ];
+                csv.push(rowData.map(cell => '"' + cell + '"').join(','));
+            }
+        });
+        
+        downloadCSV(csv.join('\n'), 'installations.csv');
+    }
+
+    function downloadCSV(csv, filename) {
+        var csvFile = new Blob([csv], {type: 'text/csv'});
+        var downloadLink = document.createElement('a');
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.click();
+        
+        showToast('Export Complete', 'File downloaded successfully', 'success');
+    }
+
+    function exportToExcel() {
+        exportToCSV();
+    }
+
+    function exportSelected() {
+        var selected = document.querySelectorAll('.installation-checkbox:checked');
+        if (selected.length === 0) {
+            showToast('No Selection', 'Please select at least one installation', 'warning');
+            return;
+        }
+        exportToCSV();
+    }
+
+    // Quick actions
+    function quickActions(id, action) {
+        var messages = {
+            'email': 'Email sent successfully',
+            'reminder': 'Reminder sent successfully'
+        };
+        showToast('Success', messages[action] || 'Action completed', 'success');
+    }
+
+    // Bulk actions
+    document.getElementById('bulkActions').addEventListener('change', function() {
+        var selected = document.querySelectorAll('.installation-checkbox:checked');
+        if (selected.length === 0) {
+            showToast('No Selection', 'Please select at least one installation', 'warning');
+            this.value = '';
+            return;
+        }
+        
+        var action = this.value;
+        if (action) {
+            if (action === 'export') {
+                exportSelected();
+            } else {
+                showToast('Bulk Action', `${action} applied to ${selected.length} installations`, 'info');
+            }
+            this.value = '';
+        }
+    });
+
+    // Toast notification
+    function showToast(title, message, type = 'info') {
+        if (!document.getElementById('toastContainer')) {
+            var container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.position = 'fixed';
+            container.style.top = '20px';
+            container.style.right = '20px';
+            container.style.zIndex = '9999';
+            document.body.appendChild(container);
+        }
+        
+        var toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>${title}:</strong> ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        
+        document.getElementById('toastContainer').appendChild(toast);
+        var bsToast = new bootstrap.Toast(toast, {delay: 3000});
+        bsToast.show();
+        
+        toast.addEventListener('hidden.bs.toast', function() {
+            this.remove();
+        });
+    }
+</script>
+{% endblock %}

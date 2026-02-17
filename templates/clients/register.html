@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Space - Register</title>
+    
+    {% load static %}
+    
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background Image */
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Dark overlay for better contrast */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 42, 58, 0.5) 0%, rgba(15, 26, 36, 0.6) 100%);
+            z-index: 1;
+        }
+
+        /* Animated background stars */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: transparent;
+            animation: stars 200s linear infinite;
+            z-index: 2;
+        }
+
+        .stars::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 10px 10px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 20px 30px, #ffc107, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 80px 150px, #ffc107, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 120px 200px, #fff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 200px 300px, #ffc107, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 250px 400px, #fff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 300px 500px, #ffc107, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 350px 600px, #fff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 400px 700px, #ffc107, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 400px 400px;
+            opacity: 0.6;
+            animation: twinkle 4s ease-in-out infinite;
+        }
+
+        @keyframes stars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-2000px); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.9; }
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glass Morphism Card */
+        .register-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .register-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 70px rgba(255, 193, 7, 0.3);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .register-header {
+            background: rgba(26, 42, 58, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .register-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,193,7,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Logo Image Styles - Not rounded, matching login page */
+        .logo-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+            z-index: 10;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(255, 193, 7, 0.4));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .register-header h2 {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .register-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .register-body {
+            padding: 40px 30px;
+        }
+
+        /* Glass Form Controls */
+        .form-floating {
+            margin-bottom: 20px;
+        }
+
+        .form-floating > .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            height: 60px;
+            padding: 1rem 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+
+        .form-floating > .form-control:focus {
+            border-color: #ffc107;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+            color: #fff;
+        }
+
+        .form-floating > .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-floating > label {
+            padding: 1rem 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .form-floating > .form-control.is-invalid {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .invalid-feedback {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            color: #ffc107;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Glass Password Requirements */
+        .password-requirements {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .password-requirements p {
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .password-requirements ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .password-requirements li {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .password-requirements li i {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+
+        /* Glass Button */
+        .btn-register {
+            background: rgba(255, 193, 7, 0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            height: 60px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a2a3a;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-register:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-register:hover {
+            background: rgba(255, 193, 7, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-register i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Glass Footer */
+        .register-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .register-footer a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            position: relative;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ffc107;
+            transition: width 0.3s ease;
+        }
+
+        .register-footer a:hover {
+            color: #ffc107;
+        }
+
+        .register-footer a:hover::after {
+            width: 100%;
+        }
+
+        .register-footer p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Glass Alert messages */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            animation: slideDown 0.5s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-success {
+            border-left: 4px solid #198754;
+        }
+
+        .alert i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 10px;
+            }
+            
+            .register-header {
+                padding: 30px 20px;
+            }
+            
+            .register-body {
+                padding: 30px 20px;
+            }
+            
+            .register-header h2 {
+                font-size: 1.75rem;
+            }
+            
+            .logo-image {
+                width: 90px;
+                height: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Image -->
+    <img src="{% static 'images/bg.jpeg' %}" alt="Star Space Background" class="background-image">
+    <div class="background-overlay"></div>
+    
+    <!-- Animated stars background -->
+    <div class="stars"></div>
+
+    <div class="register-container">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}-fill"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: invert(1);"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Register Card with Glass Effect -->
+        <div class="register-card">
+            <div class="register-header">
+                <!-- Logo Image - Not rounded, matching login page -->
+                <div class="logo-image">
+                    <img src="{% static 'images/bg3.png' %}" alt="Star Space Logo">
+                </div>
+                <h2>Create Account</h2>
+                
+            </div>
+
+            <div class="register-body">
+                <form method="post" action="{% url 'clients:register' %}">
+                    {% csrf_token %}
+                    
+                    <!-- Username Field -->
+                    <div class="form-floating mb-3">
+                        <input type="text" 
+                               class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                               id="username" 
+                               name="username"
+                               placeholder="Username"
+                               required>
+                        <label for="username">
+                            <i class="bi bi-person me-2 text-warning"></i>Username
+                        </label>
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.username.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="form-floating mb-3">
+                        <input type="password" 
+                               class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                               id="password1" 
+                               name="password1"
+                               placeholder="Password"
+                               required>
+                        <label for="password1">
+                            <i class="bi bi-lock me-2 text-warning"></i>Password
+                        </label>
+                        {% if form.password1.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.password1.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Confirm Password Field -->
+                    <div class="form-floating mb-3">
+                        <input type="password" 
+                               class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                               id="password2" 
+                               name="password2"
+                               placeholder="Confirm Password"
+                               required>
+                        <label for="password2">
+                            <i class="bi bi-lock-fill me-2 text-warning"></i>Confirm Password
+                        </label>
+                        {% if form.password2.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.password2.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Password Requirements -->
+                    <div class="password-requirements">
+                        <p>
+                            <i class="bi bi-shield-check me-2"></i>
+                            Password Requirements:
+                        </p>
+                        <ul>
+                            <li><i class="bi bi-check-circle"></i> Minimum 8 characters</li>
+                            <li><i class="bi bi-check-circle"></i> Cannot be too similar to your username</li>
+                            <li><i class="bi bi-check-circle"></i> Cannot be a commonly used password</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Register Button -->
+                    <button type="submit" class="btn-register">
+                        <i class="bi bi-person-plus"></i>
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Footer Links -->
+                <div class="register-footer">
+                    <p class="mb-2">
+                        Already have an account? 
+                        <a href="{% url 'clients:login' %}">Sign In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
