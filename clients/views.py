@@ -12,6 +12,8 @@ from django.db.models import Q
 import json
 from .models import InstallationClient, ActiveSubscriber
 from .forms import InstallationClientForm, ActiveSubscriberForm
+from .models import Order
+from .forms import OrderForm
 
 # Login view
 def login_view(request):
@@ -424,3 +426,62 @@ def installations_by_type(request, installation_type):
         'installation_type': type_display,
     }
     return render(request, 'clients/installation_list.html', context)
+
+# Order views for My Space section
+@login_required(login_url='clients:login')
+def order_list(request):
+    """View all orders"""
+    orders = Order.objects.all()
+    
+    context = {
+        'orders': orders,
+        'total_orders': orders.count(),
+    }
+    return render(request, 'clients/order_list.html', context)
+
+@login_required(login_url='clients:login')
+def add_order(request):
+    """Add a new order"""
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save()
+            messages.success(request, f'Order for {order.name} added successfully!')
+            return redirect('clients:order_list')
+    else:
+        form = OrderForm(initial={'order_date': timezone.now().date()})
+    
+    return render(request, 'clients/order_form.html', {'form': form, 'type': 'Order'})
+
+@login_required(login_url='clients:login')
+def order_detail(request, pk):
+    """View order details"""
+    order = get_object_or_404(Order, pk=pk)
+    return render(request, 'clients/order_detail.html', {'order': order})
+
+@login_required(login_url='clients:login')
+def edit_order(request, pk):
+    """Edit an existing order"""
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form = OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Order for {order.name} updated successfully!')
+            return redirect('clients:order_detail', pk=order.pk)
+    else:
+        form = OrderForm(instance=order)
+    
+    return render(request, 'clients/order_form.html', {'form': form, 'type': 'Order'})
+
+@login_required(login_url='clients:login')
+def delete_order(request, pk):
+    """Delete an order"""
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        order_name = order.name
+        order.delete()
+        messages.success(request, f'Order for {order_name} deleted successfully!')
+        return redirect('clients:order_list')
+    
+    return render(request, 'clients/order_confirm_delete.html', {'order': order})

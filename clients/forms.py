@@ -1,6 +1,8 @@
 from django import forms
 from .models import InstallationClient, ActiveSubscriber
 from django.utils import timezone
+from django import forms
+from .models import Order
 
 class InstallationClientForm(forms.ModelForm):
     class Meta:
@@ -41,3 +43,17 @@ class ActiveSubscriberForm(forms.ModelForm):
             raise forms.ValidationError("Next subscription date must be after last subscription date.")
         
         return cleaned_data
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['name', 'order_details', 'phone', 'order_date']
+        widgets = {
+            'order_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter customer name'}),
+            'order_details': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter order details'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 078-776-8637'}),
+        }
+        labels = {
+            'order_details': 'Order',
+        }

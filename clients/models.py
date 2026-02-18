@@ -98,3 +98,23 @@ class ActiveSubscriber(Client):
     
     class Meta:
         ordering = ['-is_deactivated', 'next_subscription_date']
+        
+class Order(models.Model):
+    """Order model for My Space section"""
+    name = models.CharField(max_length=200)
+    order_details = models.TextField(verbose_name="Order")
+    phone = models.CharField(max_length=20, validators=[
+        RegexValidator(
+            regex=r'^\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$',
+            message='Enter a valid phone number. Formats: (078) 776-8637, 078-776-8637, or 0787768637'
+        )
+    ])
+    order_date = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.name} - {self.order_details[:30]}..."
+    
+    class Meta:
+        ordering = ['-order_date', '-created_at']

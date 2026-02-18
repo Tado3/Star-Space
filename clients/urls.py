@@ -35,4 +35,11 @@ urlpatterns = [
     path('subscribers/<int:pk>/deactivate/', views.deactivate_subscriber, name='deactivate_subscriber'),
     path('subscribers/<int:pk>/reactivate/', views.reactivate_subscriber, name='reactivate_subscriber'),
     path('subscribers/bulk-deactivate/', views.bulk_deactivate_subscribers, name='bulk_deactivate_subscribers'),
+    
+    # My Space URLs
+    path('orders/', views.order_list, name='order_list'),
+    path('orders/add/', views.add_order, name='add_order'),
+    path('orders/<int:pk>/', views.order_detail, name='order_detail'),
+    path('orders/<int:pk>/edit/', views.edit_order, name='edit_order'),
+    path('orders/<int:pk>/delete/', views.delete_order, name='delete_order'),
 ]

@@ -1,15 +1,15 @@
-﻿{% extends 'base.html' %}
+﻿{% extends 'base.html'  %}  
 {% load humanize %}
 {% load static %}
 
 {% block content %}
 <!-- Welcome Section with Star Space Branding -->
-<div class="d-flex justify-content-between align-items-center mb-4 position-relative" style="z-index: 100;">
+<div class="d-flex justify-content-between align-items-center mb-4">
     
 </div>
 
 <!-- Statistics Cards Row - Star Space Styled -->
-<div class="row g-4 mb-4 position-relative" style="z-index: 100;">
+<div class="row g-4 mb-4">
     <!-- Total Installations Card -->
     <div class="col-xl-3 col-md-6">
         <div class="card stat-card h-100 border-0" style="border-left: 6px solid #ffc107;">
@@ -104,7 +104,7 @@
 </div>
 
 <!-- Charts and Analytics Row -->
-<div class="row g-4 mb-4 position-relative" style="z-index: 100;">
+<div class="row g-4 mb-4">
     <!-- Kit Type Distribution Chart -->
     <div class="col-xl-6">
         <div class="card border-0 shadow-lg h-100 sidebar-card">
@@ -213,8 +213,8 @@
                                         <small style="color: rgba(255, 255, 255, 0.6);">{{ installation.installation_date|date:"M d, Y" }}</small>
                                     </div>
                                     <div class="d-flex align-items-center">
-                                        <span class="badge me-2" style="background: {% if installation.kit_type == 'STANDARD' %}#ffc107{% else %}#6c757d{% endif %}; color: {% if installation.kit_type == 'STANDARD' %}#1a2a3a{% else %}#ffffff{% endif %};">
-                                            {{ installation.get_kit_type_display }}
+                                        <span class="badge me-2" style="background: {% if installation.installation_type == 'STANDARD' %}#ffc107{% else %}#6c757d{% endif %}; color: {% if installation.installation_type == 'STANDARD' %}#1a2a3a{% else %}#ffffff{% endif %};">
+                                            {{ installation.get_installation_type_display }}
                                         </span>
                                         <small style="color: rgba(255, 255, 255, 0.6);">
                                             <i class="bi bi-telephone me-1"></i>{{ installation.contact }}
@@ -243,7 +243,7 @@
 </div>
 
 <!-- Quick Actions and Alerts Row -->
-<div class="row g-4 position-relative" style="z-index: 100;">
+<div class="row g-4">
     <!-- Subscription Alerts -->
     <div class="col-xl-4">
         <div class="card border-0 shadow-lg h-100 sidebar-card">
@@ -389,35 +389,6 @@
         --sidebar-bg: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
     }
     
-    /* Background Image */
-    .background-foreground {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1 !important;
-        pointer-events: none;
-        overflow: hidden;
-    }
-    
-    .background-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.9;
-    }
-    
-    .background-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.6) 100%);
-        pointer-events: none;
-    }
-    
     /* Sidebar */
     #sidebar {
         z-index: 1000 !important;
@@ -428,11 +399,6 @@
     #content {
         position: relative;
         z-index: 2 !important;
-    }
-    
-    .position-relative {
-        position: relative;
-        z-index: 100 !important;
     }
     
     /* Sidebar themed cards */

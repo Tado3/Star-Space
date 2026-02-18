@@ -497,6 +497,20 @@
                         </li>
                     </ul>
                 </li>
+
+                <!-- My Space Section with Professional Icons -->
+                <li class="{% if 'order' in request.resolver_match.url_name %}active{% endif %}">
+                    <a href="#mySpaceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="bi bi-grid-3x3-gap-fill"></i> My Space
+                    </a>
+                    <ul class="collapse list-unstyled" id="mySpaceSubmenu">
+                        <li>
+                            <a href="{% url 'clients:order_list' %}">
+                                <i class="bi bi-clipboard-data"></i> Orders
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
 
             <!-- Sidebar Footer with User Info -->

@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-grid-3x3-gap-fill me-2" style="color: #ffc107;"></i>My Space - Orders</h2>
+        <a href="{% url 'clients:add_order' %}" class="btn" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3);">
+            <i class="bi bi-plus-circle me-2"></i>Add New Order
+        </a>
+    </div>
+
+    <!-- Stats Cards with gradient matching sidebar -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); border-left: 4px solid #ffc107;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="text-white mb-1">{{ total_orders }}</h3>
+                        <p class="text-white-50 mb-0">Total Orders</p>
+                    </div>
+                    <i class="bi bi-clipboard-data" style="font-size: 2.5rem; color: #ffc107; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); border-left: 4px solid #ffc107;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="text-white mb-1">{{ orders.count }}</h3>
+                        <p class="text-white-50 mb-0">Active Orders</p>
+                    </div>
+                    <i class="bi bi-calendar-check" style="font-size: 2.5rem; color: #ffc107; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); border-left: 4px solid #ffc107;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="text-white mb-1">{{ orders.count }}</h3>
+                        <p class="text-white-50 mb-0">Customers</p>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 2.5rem; color: #ffc107; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by name, order details, or phone..." 
+                       style="border: 2px solid #e9ecef; border-radius: 10px 0 0 10px; padding: 10px 15px;">
+                <button class="btn" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 0 10px 10px 0;" id="searchButton">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-end gap-2">
+                <select id="dateFilter" class="form-select" style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 15px; max-width: 200px;">
+                    <option value="all">All Dates</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+                <button class="btn" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 10px;" id="clearFilter">
+                    <i class="bi bi-x-circle"></i> Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results count -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <p class="text-muted" id="resultCount">Showing {{ orders.count }} order(s)</p>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-hover" id="ordersTable">
+                <thead style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107;">
+                    <tr>
+                        <th class="text-white">Name</th>
+                        <th class="text-white">Order</th>
+                        <th class="text-white">Phone</th>
+                        <th class="text-white">Date</th>
+                        <th class="text-white">Created</th>
+                        <th class="text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <strong style="color: #1a2a3a;">{{ order.name }}</strong>
+                        </td>
+                        <td>{{ order.order_details|truncatechars:50 }}</td>
+                        <td>
+                            <a href="tel:{{ order.phone }}" class="text-decoration-none" style="color: #1a2a3a;">
+                                <i class="bi bi-telephone me-1" style="color: #ffc107;"></i>{{ order.phone }}
+                            </a>
+                        </td>
+                        <td>
+                            <span style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107; padding: 5px 10px; border-radius: 5px; font-size: 0.9rem;">
+                                <i class="bi bi-calendar me-1"></i>{{ order.order_date|date:"M d, Y" }}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1" style="color: #ffc107;"></i>{{ order.created_at|timesince }} ago
+                            </small>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'clients:order_detail' order.pk %}" class="btn btn-sm" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3);" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'clients:edit_order' order.pk %}" class="btn btn-sm" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3);" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #dc3545; border: 1px solid #dc3545;" title="Delete" 
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal{{ order.pk }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+
+                            <!-- Delete Modal with updated colors -->
+                            <div class="modal fade" id="deleteModal{{ order.pk }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24);">
+                                            <h5 class="modal-title" style="color: #ffc107;">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete the order for <strong style="color: #1a2a3a;">{{ order.name }}</strong>?</p>
+                                            <div class="alert" style="background: linear-gradient(135deg, #1a2a3a, #0f1a24); color: #ffc107; border-left: 4px solid #ffc107;">
+                                                <small>{{ order.order_details|truncatechars:100 }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn" style="background: #6c757d; color: white;" data-bs-dismiss="modal">Cancel</button>
+                                            <form action="{% url 'clients:delete_order' order.pk %}" method="POST" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn" style="background: #dc3545; color: white;">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #ffc107;"></i>
+                            <p class="mt-2" style="color: #1a2a3a;">No orders found. Click "Add New Order" to create one.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Search and Filter -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    const table = document.getElementById('ordersTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    const resultCount = document.getElementById('resultCount');
+
+    // If no orders, don't attach search functionality
+    if (rows.length === 1 && rows[0].querySelector('td[colspan]')) {
+        return;
+    }
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const dateFilterValue = dateFilter.value;
+        let visibleCount = 0;
+
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            
+            // Skip the "no orders" row if it exists
+            if (row.querySelector('td[colspan]')) {
+                continue;
+            }
+
+            const name = row.cells[0].textContent.toLowerCase();
+            const order = row.cells[1].textContent.toLowerCase();
+            const phone = row.cells[2].textContent.toLowerCase();
+            const dateText = row.cells[3].textContent;
+            const orderDate = parseDateFromText(dateText);
+            
+            // Search filter
+            const matchesSearch = name.includes(searchTerm) || 
+                                 order.includes(searchTerm) || 
+                                 phone.includes(searchTerm);
+            
+            // Date filter
+            let matchesDate = true;
+            if (dateFilterValue !== 'all' && orderDate) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                switch(dateFilterValue) {
+                    case 'today':
+                        matchesDate = isSameDay(orderDate, today);
+                        break;
+                    case 'week':
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(today.getDate() - 7);
+                        matchesDate = orderDate >= weekAgo;
+                        break;
+                    case 'month':
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        matchesDate = orderDate >= monthAgo;
+                        break;
+                }
+            }
+
+            if (matchesSearch && matchesDate) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+
+        // Update result count
+        resultCount.textContent = `Showing ${visibleCount} order(s)`;
+        
+        // Show "no results" message if nothing found
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const noResultsRow = document.getElementById('noResultsRow');
+        
+        if (visibleCount === 0) {
+            if (!noResultsRow) {
+                const newRow = tbody.insertRow(0);
+                newRow.id = 'noResultsRow';
+                const cell = newRow.insertCell(0);
+                cell.colSpan = 6;
+                cell.className = 'text-center py-4';
+                cell.innerHTML = '<i class="bi bi-search" style="font-size: 3rem; color: #ffc107;"></i>' +
+                                '<p class="mt-2" style="color: #1a2a3a;">No orders match your search criteria.</p>';
+            }
+        } else if (noResultsRow) {
+            noResultsRow.remove();
+        }
+    }
+
+    function parseDateFromText(dateText) {
+        // Parse date from format like "Dec 15, 2023"
+        const match = dateText.match(/([A-Za-z]{3})\s+(\d{1,2}),\s+(\d{4})/);
+        if (match) {
+            return new Date(`${match[1]} ${match[2]}, ${match[3]}`);
+        }
+        return null;
+    }
+
+    function isSameDay(date1, date2) {
+        return date1.getDate() === date2.getDate() &&
+               date1.getMonth() === date2.getMonth() &&
+               date1.getFullYear() === date2.getFullYear();
+    }
+
+    function clearFilters() {
+        searchInput.value = '';
+        dateFilter.value = 'all';
+        
+        // Show all rows
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row.querySelector('td[colspan]')) {
+                row.style.display = '';
+            }
+        }
+        
+        // Remove no results row if it exists
+        const noResultsRow = document.getElementById('noResultsRow');
+        if (noResultsRow) {
+            noResultsRow.remove();
+        }
+        
+        // Update result count
+        resultCount.textContent = `Showing ${rows.length} order(s)`;
+    }
+
+    // Event listeners
+    searchInput.addEventListener('keyup', filterTable);
+    searchButton.addEventListener('click', filterTable);
+    dateFilter.addEventListener('change', filterTable);
+    clearButton.addEventListener('click', clearFilters);
+
+    // Add debounce to search input for better performance
+    let debounceTimer;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(filterTable, 300);
+    });
+});
+</script>
+
+<style>
+    .table-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .table thead th {
+        border-bottom: 2px solid #ffc107;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(255, 193, 7, 0.05);
+    }
+    
+    .stat-card {
+        border-radius: 10px;
+        padding: 20px;
+        transition: transform 0.3s;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    }
+
+    /* Search input focus style */
+    .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    }
+
+    .form-select:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    }
+</style>
+{% endblock %}
