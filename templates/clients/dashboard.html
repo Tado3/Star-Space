@@ -105,9 +105,9 @@
 
 <!-- Charts and Analytics Row -->
 <div class="row g-4 mb-4">
-    <!-- Kit Type Distribution Chart -->
-    <div class="col-xl-6">
-        <div class="card border-0 shadow-lg h-100 sidebar-card">
+    <!-- Kit Type Distribution Chart - Extra Large Container -->
+    <div class="col-xl-7">
+        <div class="card border-0 shadow-lg sidebar-card">
             <div class="card-header bg-transparent border-0 pt-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold mb-0" style="color: #ffc107;">
@@ -120,10 +120,10 @@
                 {% if total_active > 0 %}
                 <div class="row align-items-center">
                     <div class="col-md-5">
-                        <!-- Donut Chart Visualization -->
-                        <div class="position-relative" style="width: 180px; height: 180px; margin: 0 auto;">
+                        <!-- Extra Large Donut Chart -->
+                        <div class="position-relative" style="width: 200px; height: 200px; margin: 0 auto;">
                             <div class="position-absolute top-50 start-50 translate-middle text-center">
-                                <h3 class="fw-bold mb-0" style="color: #ffc107;">{{ total_active }}</h3>
+                                <h2 class="fw-bold mb-0" style="color: #ffc107;">{{ total_active }}</h2>
                                 <small style="color: rgba(255, 255, 255, 0.6);">Total</small>
                             </div>
                             <svg viewBox="0 0 36 36" class="w-100 h-100">
@@ -135,56 +135,87 @@
                                         stroke-dashoffset="25" 
                                         transform="rotate(-90 18 18)"></circle>
                                 {% endif %}
+                                {% if kit_type_stats.mini %}
+                                <circle cx="18" cy="18" r="15.91549430918954" fill="transparent" 
+                                        stroke="#6c757d" stroke-width="2.5" 
+                                        stroke-dasharray="{% widthratio kit_type_stats.mini total_active 100 %} 100" 
+                                        stroke-dashoffset="{% widthratio kit_type_stats.standard total_active 100 %}" 
+                                        transform="rotate(-90 18 18)"></circle>
+                                {% endif %}
                             </svg>
                         </div>
                     </div>
                     <div class="col-md-7">
+                        <!-- Stats with enhanced styling -->
                         <div class="list-group list-group-flush bg-transparent">
-                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0" style="background: transparent !important; border-bottom: 1px solid #2c3e50 !important;">
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0" style="background: transparent !important; border-bottom: 2px solid #2c3e50 !important;">
                                 <div>
-                                    <span class="badge rounded-circle p-2 me-2" style="width: 12px; height: 12px; background: #ffc107;">&nbsp;</span>
-                                    <span class="fw-medium" style="color: #ffffff;">Standard Kit</span>
+                                    <span class="badge rounded-circle p-2 me-2" style="width: 14px; height: 14px; background: #ffc107;">&nbsp;</span>
+                                    <span class="fw-bold" style="color: #ffffff; font-size: 1.1rem;">Standard Kit</span>
                                 </div>
                                 <div>
-                                    <span class="fw-bold" style="color: #ffc107;">{{ kit_type_stats.standard|default:"0" }}</span>
-                                    <span class="small ms-2" style="color: rgba(255, 255, 255, 0.6);">
+                                    <span class="fw-bold fs-5" style="color: #ffc107;">{{ kit_type_stats.standard|default:"0" }}</span>
+                                    <span class="small ms-2 fw-bold" style="color: rgba(255, 255, 255, 0.6);">
                                         ({% widthratio kit_type_stats.standard total_active 100 %}%)
                                     </span>
                                 </div>
                             </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0" style="background: transparent !important;">
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0" style="background: transparent !important; border-bottom: 1px solid #2c3e50 !important;">
                                 <div>
-                                    <span class="badge rounded-circle p-2 me-2" style="width: 12px; height: 12px; background: #6c757d;">&nbsp;</span>
-                                    <span class="fw-medium" style="color: #ffffff;">Mini Kit</span>
+                                    <span class="badge rounded-circle p-2 me-2" style="width: 14px; height: 14px; background: #6c757d;">&nbsp;</span>
+                                    <span class="fw-bold" style="color: #ffffff; font-size: 1.1rem;">Mini Kit</span>
                                 </div>
                                 <div>
-                                    <span class="fw-bold" style="color: #ffc107;">{{ kit_type_stats.mini|default:"0" }}</span>
-                                    <span class="small ms-2" style="color: rgba(255, 255, 255, 0.6);">
+                                    <span class="fw-bold fs-5" style="color: #ffc107;">{{ kit_type_stats.mini|default:"0" }}</span>
+                                    <span class="small ms-2 fw-bold" style="color: rgba(255, 255, 255, 0.6);">
                                         ({% widthratio kit_type_stats.mini total_active 100 %}%)
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="progress mt-3" style="height: 8px; background-color: #2c3e50;">
-                            <div class="progress-bar" style="width: {% widthratio kit_type_stats.standard total_active 100 %}%; background: #ffc107;" 
-                                 role="progressbar" aria-valuenow="{{ kit_type_stats.standard }}" aria-valuemin="0" aria-valuemax="{{ total_active }}">
+                        
+                        <!-- Distribution Summary -->
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small fw-bold" style="color: rgba(255, 255, 255, 0.8);">Distribution Breakdown</span>
+                                <span class="small" style="color: #ffc107;">{{ total_active }} Total</span>
                             </div>
-                            <div class="progress-bar" style="width: {% widthratio kit_type_stats.mini total_active 100 %}%; background: #6c757d;"></div>
+                            <div class="progress mb-3" style="height: 12px; background-color: #2c3e50; border-radius: 10px;">
+                                <div class="progress-bar" style="width: {% widthratio kit_type_stats.standard total_active 100 %}%; background: #ffc107; border-radius: 10px 0 0 10px;" 
+                                     role="progressbar" aria-valuenow="{{ kit_type_stats.standard }}" aria-valuemin="0" aria-valuemax="{{ total_active }}">
+                                </div>
+                                <div class="progress-bar" style="width: {% widthratio kit_type_stats.mini total_active 100 %}%; background: #6c757d; border-radius: 0 10px 10px 0;"></div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.2);">
+                                        <small class="d-block" style="color: rgba(255, 255, 255, 0.6);">Standard Ratio</small>
+                                        <span class="fw-bold fs-4" style="color: #ffc107;">{% widthratio kit_type_stats.standard total_active 100 %}%</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3" style="background: rgba(108, 117, 125, 0.1); border: 1px solid rgba(108, 117, 125, 0.2);">
+                                        <small class="d-block" style="color: rgba(255, 255, 255, 0.6);">Mini Ratio</small>
+                                        <span class="fw-bold fs-4" style="color: #ffc107;">{% widthratio kit_type_stats.mini total_active 100 %}%</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {% else %}
-                <div class="text-center py-4">
-                    <i class="bi bi-pie-chart fs-1" style="color: #ffc107; opacity: 0.5;"></i>
-                    <p class="mt-2" style="color: #ffffff;">No active subscribers to display</p>
+                <div class="text-center py-5">
+                    <i class="bi bi-pie-chart display-1" style="color: #ffc107; opacity: 0.5;"></i>
+                    <p class="mt-3 fs-5" style="color: #ffffff;">No active subscribers to display</p>
                 </div>
                 {% endif %}
             </div>
         </div>
     </div>
 
-    <!-- Recent Installations with Timeline -->
-    <div class="col-xl-6">
+    <!-- Recent Installations with Timeline - Smaller size -->
+    <div class="col-xl-5">
         <div class="card border-0 shadow-lg h-100 sidebar-card">
             <div class="card-header bg-transparent border-0 pt-4">
                 <div class="d-flex justify-content-between align-items-center">
